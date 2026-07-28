@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FestO - Gjej Vendin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FFmpeg për konvertim video -->
+    <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.6/dist/ffmpeg.min.js">
+    </script>
+    <style>
+        /* ============================================================
+           FESTO PREMIUM - event.html (Versioni me SVG Ikonat në të Zezë)
+           Të gjitha ikonat: SVG në ngjyrë të zezë (#1A1A1A)
+           Cloudinary për upload video
+           Limiti: 200MB dhe 1 minutë
+           ============================================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --festo-gold: #D4A84C;
+            --festo-gold-light: #E8C97A;
+            --festo-gold-dark: #B8943E;
+            --festo-gold-bg: #FDF8F0;
+            --festo-white: #FFFFFF;
+            --festo-black: #1A1A1A;
+            --festo-dark: #2D2D2D;
+            --festo-gray: #888888;
+            --festo-light-gray: #F5F5F5;
+            --festo-shadow: 0 20px 60px rgba(212, 168, 76, 0.2);
+            --festo-gradient: linear-gradient(135deg, #D4A84C, #B8943E);
+            --festo-gradient-light: linear-gradient(135deg, #FDF8F0, #F5EDD6);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--festo-gradient-light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: var(--festo-white);
+            border-radius: 28px;
+            padding: 30px 25px 20px;
+            box-shadow: var(--festo-shadow);
+            border: 1px solid rgba(212, 168, 76, 0.15);
+            position: relative;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== IKONAT SVG NË TË ZEZË ===== */
+        .icon-black {
+            color: var(--festo-black);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+
+        .icon-black svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--festo-black);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .icon-black-lg svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .icon-black-md svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* ===== HEADER ===== */
+        .festo-header {
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(212, 168, 76, 0.1);
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .festo-header .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.0rem;
+            font-weight: 700;
+            color: var(--festo-black);
+        }
+
+        .festo-header .logo span {
+            color: var(--festo-gold);
+            font-style: italic;
+        }
+
+        .festo-header .tagline {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            color: var(--festo-gray);
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        .festo-header .tagline .highlight {
+            color: var(--festo-gold);
+            font-weight: 700;
+        }
+
+        /* ===== YJET ===== */
+        .stars-divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            user-select: none;
+        }
+
+        .stars-divider .star {
+            color: var(--festo-gold);
+            display: inline-block;
+            opacity: 0.6;
+            font-weight: 300;
+            line-height: 1;
+            animation: floatStar 2.5s ease-in-out infinite;
+        }
+
+        .d1 { font-size: 0.7rem; animation-delay: 0s; }
+        .d2 { font-size: 1.1rem; animation-delay: 0.4s; }
+        .d3 { font-size: 1.4rem; animation-delay: 0.8s; }
+        .d4 { font-size: 1.0rem; animation-delay: 1.2s; }
+        .d5 { font-size: 0.6rem; animation-delay: 1.6s; }
+
+        @keyframes floatStar {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-8px) scale(1.2); opacity: 0.9; }
+        }
+
+        /* ===== EMRAT ===== */
+        .organizer-wrapper {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(212, 168, 76, 0.06);
+        }
+
+        .organizer-names {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.0rem;
+            font-weight: 700;
+            color: var(--festo-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2px;
+            letter-spacing: 1px;
+        }
+
+        .organizer {
+            font-weight: 700;
+            color: var(--festo-gold);
+        }
+
+        .ampersand {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--festo-gold);
+            font-style: italic;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        .event-suffix {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.0rem;
+            font-weight: 400;
+            color: var(--festo-gold);
+            font-style: italic;
+            margin-left: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== SEKSIONI KRYESOR ===== */
+        .main-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--festo-black);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .main-title .highlight-black {
+            color: var(--festo-black);
+            font-weight: 700;
+        }
+
+        .main-sub {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--festo-gray);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* ===== FLOATING LABEL ===== */
+        .main-section .form-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .main-section .form-group input {
+            width: 100%;
+            padding: 20px 20px 8px 20px;
+            border: 2px solid #E8E0EC;
+            border-radius: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            background: var(--festo-white);
+            color: var(--festo-dark);
+            text-align: left;
+            padding-left: 24px;
+        }
+
+        .main-section .form-group input:focus {
+            outline: none;
+            border-color: var(--festo-gold);
+            box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12);
+        }
+
+        .main-section .form-group input::placeholder {
+            color: transparent;
+        }
+
+        .main-section .form-group .floating-label {
+            position: absolute;
+            left: 24px;
+            top: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--festo-gray);
+            pointer-events: none;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        .main-section .form-group input:focus ~ .floating-label,
+        .main-section .form-group input:not(:placeholder-shown) ~ .floating-label {
+            top: 4px;
+            font-size: 0.7rem;
+            color: var(--festo-gold);
+        }
+
+        /* ===== BUTONI KRYESOR ===== */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--festo-gradient);
+            color: var(--festo-white);
+            border: none;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 168, 76, 0.35);
+            background: var(--festo-gold-dark);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            background: var(--festo-gradient);
+        }
+
+        .btn-primary .icon-black svg {
+            stroke: var(--festo-white);
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            display: none;
+            text-align: center;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--festo-gold-bg);
+            border-radius: 16px;
+            border: 2px solid var(--festo-gold);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .table-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--festo-black);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .table-label {
+            text-align: center;
+            color: var(--festo-gray);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .guest-list-title {
+            color: var(--festo-black);
+            margin: 14px 0 10px;
+            font-size: 0.9rem;
+            padding-top: 14px;
+            border-top: 2px solid rgba(212, 168, 76, 0.15);
+        }
+
+        .guest-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--festo-white);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            border: 1px solid #eee;
+        }
+
+        .guest-item .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--festo-gradient);
+            color: var(--festo-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .guest-item .name {
+            font-weight: 500;
+            color: var(--festo-dark);
+        }
+
+        .guest-item .badge {
+            margin-left: auto;
+            background: var(--festo-gold-bg);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: var(--festo-gray);
+        }
+
+        .guest-item.current {
+            border: 2px solid var(--festo-gold);
+            background: var(--festo-gold-bg);
+        }
+
+        .guest-item.current .badge {
+            background: var(--festo-gold);
+            color: var(--festo-white);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background: var(--festo-black);
+            color: var(--festo-white);
+            border: 2px solid var(--festo-gold);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--festo-gold);
+            color: var(--festo-black);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 168, 76, 0.35);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+            background: var(--festo-black);
+        }
+
+        /* ===== HARTA ===== */
+        .map-section {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .map-section.open {
+            display: block;
+        }
+
+        .map-section h4 {
+            color: var(--festo-black);
+            margin-bottom: 4px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .map-section .map-sub {
+            color: var(--festo-gray);
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+
+        .map-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 8px 0 12px;
+            font-size: 0.7rem;
+            color: var(--festo-gray);
+        }
+
+        .map-legend span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .map-legend .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .dot.occupied { background: var(--festo-gold); }
+        .dot.empty { background: #ddd; }
+        .dot.selected { background: var(--festo-gold); }
+
+        .map-container {
+            display: grid;
+            gap: 8px;
+            padding: 14px;
+            background: var(--festo-gold-bg);
+            border-radius: 16px;
+            border: 2px solid rgba(212, 168, 76, 0.15);
+            min-height: 200px;
+        }
+
+        .map-table-clickable {
+            background: var(--festo-white);
+            border-radius: 10px;
+            padding: 12px 4px;
+            text-align: center;
+            border: 2px solid #e8e0ec;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .map-table-clickable:hover {
+            transform: scale(1.04);
+            border-color: var(--festo-gold-light);
+        }
+
+        .map-table-clickable.occupied {
+            border-color: var(--festo-gold);
+            background: var(--festo-gold-bg);
+        }
+
+        .map-table-clickable.empty {
+            opacity: 0.6;
+            border-color: #ddd;
+        }
+
+        .map-table-clickable.selected {
+            border-color: var(--festo-gold);
+            background: var(--festo-gold-bg);
+            transform: scale(1.06);
+            box-shadow: 0 0 0 3px rgba(212, 168, 76, 0.25);
+        }
+
+        .map-table-clickable .num {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--festo-black);
+        }
+
+        .map-table-clickable .count {
+            font-size: 0.55rem;
+            color: var(--festo-gray);
+            margin-top: 2px;
+        }
+
+        .map-table-clickable .label-small {
+            font-size: 0.4rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .map-empty {
+            visibility: hidden;
+        }
+
+        .table-info {
+            margin-top: 12px;
+            display: none;
+            background: var(--festo-gold-bg);
+            border-radius: 12px;
+            padding: 12px;
+            border-left: 4px solid var(--festo-gold);
+        }
+
+        .table-info.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .table-info h5 {
+            color: var(--festo-black);
+            font-size: 0.9rem;
+        }
+
+        .table-info .guest-names {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: var(--festo-dark);
+        }
+
+        .stage-area {
+            background: var(--festo-gradient);
+            color: var(--festo-white);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            margin-top: 10px;
+        }
+
+        /* ===== FOOTER MENU ===== */
+        .footer-menu {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(212, 168, 76, 0.12);
+            flex-shrink: 0;
+        }
+
+        .footer-btn {
+            flex: 1;
+            padding: 10px 6px;
+            background: var(--festo-gold-bg);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--festo-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .footer-btn:hover {
+            background: rgba(212, 168, 76, 0.1);
+            border-color: var(--festo-gold-light);
+        }
+
+        .footer-btn.active {
+            background: var(--festo-gradient);
+            color: var(--festo-white);
+            border-color: var(--festo-gold);
+            box-shadow: 0 4px 15px rgba(212, 168, 76, 0.2);
+        }
+
+        .footer-btn .icon-black-lg {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .footer-btn .icon-black-lg svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .footer-btn.active .icon-black-lg svg {
+            stroke: var(--festo-white);
+        }
+
+        .footer-btn small {
+            display: block;
+            font-size: 0.5rem;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .footer-btn.active small {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ===== SHARE SECTION ===== */
+        .share-section {
+            display: none;
+            margin-top: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .share-section.open {
+            display: block;
+        }
+
+        .share-section h4 {
+            color: var(--festo-black);
+            margin-bottom: 6px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .share-section .share-sub {
+            color: var(--festo-gray);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .share-section .form-group {
+            margin-bottom: 14px;
+        }
+
+        .share-section .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--festo-dark);
+            font-size: 0.85rem;
+        }
+
+        .share-section .form-group input,
+        .share-section .form-group textarea,
+        .share-section .form-group select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #E8E0EC;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            background: var(--festo-white);
+            color: var(--festo-dark);
+            transition: all 0.3s ease;
+        }
+
+        .share-section .form-group input:focus,
+        .share-section .form-group textarea:focus,
+        .share-section .form-group select:focus {
+            outline: none;
+            border-color: var(--festo-gold);
+            box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12);
+        }
+
+        .share-section .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .share-section .upload-zone {
+            border: 2px dashed var(--festo-gold);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            background: var(--festo-gold-bg);
+            font-size: 24px;
+            color: var(--festo-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .share-section .upload-zone:hover {
+            background: var(--festo-gold-bg);
+            border-color: var(--festo-gold-dark);
+        }
+
+        .share-section .upload-zone .text {
+            font-size: 13px;
+            color: var(--festo-gray);
+            margin-top: 4px;
+        }
+
+        .upload-progress {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .upload-progress .progress-bar {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .upload-progress .progress-bar .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--festo-gold);
+            transition: width 0.3s;
+        }
+
+        .upload-progress .progress-text {
+            font-size: 0.75rem;
+            color: var(--festo-gray);
+            margin-top: 4px;
+        }
+
+        .memory-item {
+            background: var(--festo-white);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--festo-gold);
+        }
+
+        .memory-item .mem-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--festo-gray);
+        }
+
+        .memory-item .mem-header strong {
+            color: var(--festo-black);
+        }
+
+        .memory-item .mem-text {
+            color: var(--festo-dark);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .memory-item .mem-time {
+            font-size: 0.65rem;
+            color: #bbb;
+            margin-top: 4px;
+        }
+
+        .memory-empty {
+            color: var(--festo-gray);
+            text-align: center;
+            padding: 16px;
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 14px;
+            color: var(--festo-gold);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .back-link:hover {
+            color: var(--festo-gold-dark);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 16px; }
+            .festo-header .logo { font-size: 1.7rem; }
+            .festo-header .tagline { font-size: 0.75rem; }
+            .organizer-names { font-size: 1.5rem; }
+            .organizer { font-size: 1.5rem; }
+            .ampersand { font-size: 1.7rem; }
+            .event-suffix { font-size: 1.5rem; }
+            .icon-black-lg svg { width: 20px; height: 20px; }
+            .icon-black svg { width: 18px; height: 18px; }
+            .footer-btn { padding: 8px 4px; font-size: 0.65rem; }
+            .footer-btn .icon-black-lg svg { width: 18px; height: 18px; }
+            .stars-divider { gap: 6px; }
+            .d1 { font-size: 0.6rem; }
+            .d2 { font-size: 0.9rem; }
+            .d3 { font-size: 1.1rem; }
+            .d4 { font-size: 0.8rem; }
+            .d5 { font-size: 0.5rem; }
+            .main-title { font-size: 1.1rem; }
+            .table-number { font-size: 2.5rem; }
+            .main-section .form-group input { padding: 18px 16px 6px 16px; padding-left: 18px; }
+            .main-section .form-group .floating-label { left: 18px; font-size: 0.8rem; }
+            .btn-primary { font-size: 0.8rem; padding: 12px; }
+            .map-container { gap: 5px; padding: 10px; }
+            .map-table-clickable { padding: 8px 2px; }
+            .map-table-clickable .num { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 380px) {
+            .map-container { gap: 4px; padding: 8px; }
+            .map-table-clickable { padding: 6px 2px; }
+            .map-table-clickable .num { font-size: 0.75rem; }
+            .map-table-clickable .label-small { font-size: 0.35rem; }
+            .map-table-clickable .count { font-size: 0.45rem; }
+            .footer-btn { padding: 6px 2px; font-size: 0.6rem; }
+            .footer-btn .icon-black-lg svg { width: 16px; height: 16px; }
+            .festo-header .logo { font-size: 1.5rem; }
+            .organizer-names { font-size: 1.3rem; }
+            .organizer { font-size: 1.3rem; }
+            .ampersand { font-size: 1.5rem; }
+            .event-suffix { font-size: 1.3rem; }
+            .stars-divider { gap: 4px; }
+            .d1 { font-size: 0.5rem; }
+            .d2 { font-size: 0.7rem; }
+            .d3 { font-size: 0.9rem; }
+            .d4 { font-size: 0.6rem; }
+            .d5 { font-size: 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- ============================================================ -->
+        <!-- HEADER -->
+        <!-- ============================================================ -->
+        <div class="festo-header">
+            <div class="logo">Fest<span>O</span></div>
+            <div class="tagline">✦ <span class="highlight">Find Your Place.</span> Share Your Joy. ✦</div>
+
+            <div class="stars-divider">
+                <span class="star d1">✦</span>
+                <span class="star d2">✦</span>
+                <span class="star d3">✦</span>
+                <span class="star d4">✦</span>
+                <span class="star d5">✦</span>
+            </div>
+
+            <div class="organizer-wrapper">
+    <div class="organizer-names">
+        <div class="names-row">
+            <span class="organizer" id="firstNameDisplay">X</span>
+            <span class="ampersand">&amp;</span>
+            <span class="organizer" id="secondNameDisplay">Y</span>
+        </div>
+        <div class="suffix-row">
+            <span class="event-suffix">Event's</span>
+        </div>
+    </div>
+</div>
+
+        <!-- ============================================================ -->
+        <!-- SEKSIONI KRYESOR: GJEJ VENDIN -->
+        <!-- ============================================================ -->
+        <div class="main-section">
+
+            <div class="main-title">
+                Shkruaj emrin për të gjetur <span class="highlight-black">tavolinën tënde</span>
+            </div>
+
+            <div class="main-sub">
+                <span class="icon-black">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                Gjej vendin tënd në sekonda
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="guestName" placeholder=" ">
+                <label class="floating-label">Emër Mbiemër</label>
+                <div class="error" id="errorMessage">❌ Emri nuk u gjet. Kontrollo ose provo një tjetër.</div>
+            </div>
+
+            <button class="btn-primary" id="searchBtn">
+                <span class="icon-black">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                Gjej Tavolinën
+            </button>
+
+            <div class="result" id="result">
+                <div class="table-label">✦ Tavolina juaj ✦</div>
+                <div class="table-number" id="tableNumber">-</div>
+
+                <div class="guest-list-title">👥 Të ftuarit në këtë tavolinë</div>
+                <div id="guestList"></div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- HARTA -->
+            <!-- ============================================================ -->
+            <div class="map-section" id="mapSection">
+                <h4>
+                    <span class="icon-black-md">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>
+                            <path d="M8 2v16"/>
+                            <path d="M16 6v16"/>
+                        </svg>
+                    </span>
+                    Harta e Sallës
+                </h4>
+                <div class="map-sub">Kliko mbi një tavolinë për të parë të ftuarit</div>
+
+                <div class="map-legend">
+                    <span><span class="dot occupied"></span> E zënë</span>
+                    <span><span class="dot empty"></span> E lirë</span>
+                    <span><span class="dot selected"></span> E zgjedhur</span>
+                </div>
+
+                <div class="map-container" id="mapContainer">
+                    <!-- Gjenerohet nga JavaScript -->
+                </div>
+
+                <div class="table-info" id="tableInfo">
+                    <h5 id="selectedTableTitle">📍 Tavolina 5</h5>
+                    <div class="guest-names" id="selectedTableGuests">👤 Arben, Elena, Mark, Sofia</div>
+                </div>
+
+                <div class="stage-area">🎤 SKENA</div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- NDAJE GËZIMIN -->
+            <!-- ============================================================ -->
+            <div class="share-section" id="shareSection">
+                <h4>
+                    <span class="icon-black-md">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </span>
+                    Ndaje Gëzimin!
+                </h4>
+                <div class="share-sub">Ndaj momentet e tua më të bukura me të gjithë të ftuarit!</div>
+
+                <div class="form-group">
+                    <label>👤 Emri juaj</label>
+                    <input type="text" id="shareName" placeholder="">
+                </div>
+
+                <div class="form-group">
+                    <label>📋 Lloji i përmbajtjes</label>
+                    <select id="shareType">
+                        <option value="message">💬 Urim / Mesazh</option>
+                        <option value="photo">📸 Foto</option>
+                        <option value="video">🎥 Video</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="fileInputGroup" style="display:none;">
+                    <label>📤 Zgjidh skedarin</label>
+                    <div class="upload-zone" id="uploadZone">
+                        📷 +
+                        <div class="text">Shto foto ose video</div>
+                    </div>
+                    <input type="file" id="shareFile" accept="image/*,video/*,.mp4,.webm,.ogg,.mov,.avi,.mkv,.flv,.wmv,.3gp" style="display:none;">
+                    <small style="color:#999; font-size:0.7rem;">
+                        Formatet: MP4, WEBM, OGG, MOV, AVI, MKV, FLV, WMV, 3GP 
+                        <strong>(max 200MB, deri në 1 minutë)</strong>
+                    </small>
+                    <div class="upload-progress" id="uploadProgress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressBar"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">Duke ngarkuar...</div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="messageInputGroup">
+                    <label>💬 Shkruaj urimin</label>
+                    <textarea id="shareMessage" placeholder="Shkruaj një urim për çiftin..." rows="3"></textarea>
+                </div>
+
+                <button class="btn-primary" id="shareBtn">
+                    <span class="icon-black">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </span>
+                    Shpërnda Gëzimin!
+                </button>
+
+                <div style="margin-top:20px;">
+                    <h4 style="color:var(--festo-black); margin-bottom:10px; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
+                        <span class="icon-black-md">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="2.18"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <path d="M22 14l-5-5-5 5-5-5-5 5"/>
+                            </svg>
+                        </span>
+                        Momentet e Festës
+                    </h4>
+                    <div id="contentGallery">
+                        <div class="memory-empty">📭 Ende nuk ka momente të ndara. Bëhu i pari!</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- FOOTER MENU - Butona më të vegjël -->
+        <!-- ============================================================ -->
+        <div class="footer-menu">
+            <button class="footer-btn active" data-section="map">
+                <span class="icon-black-lg">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/>
+                        <path d="M8 2v16"/>
+                        <path d="M16 6v16"/>
+                    </svg>
+                </span>
+                Harta
+                <small>View the Map</small>
+            </button>
+            <button class="footer-btn" data-section="share">
+                <span class="icon-black-lg">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                </span>
+                Ndaje Gëzimin
+                <small>Share Your Joy</small>
+            </button>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- BACK LINK -->
+        <!-- ============================================================ -->
+        <a href="/" class="back-link">← Kthehu te FestO</a>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // TË DHËNAT
+        // ============================================================
+        const eventId = window.location.pathname.split('/').pop();
+        const ALL_TABLES = Array.from({ length: 20 }, (_, i) => i + 1);
+
+        // ============================================================
+        // FOOTER MENU
+        // ============================================================
+        document.querySelectorAll('.footer-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.footer-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.map-section, .share-section').forEach(el => {
+                    el.classList.remove('open');
+                });
+
+                const section = this.dataset.section;
+                if (section === 'map') {
+                    document.getElementById('mapSection').classList.add('open');
+                    if (currentEvent) renderMap(currentEvent);
+                } else if (section === 'share') {
+                    document.getElementById('shareSection').classList.add('open');
+                }
+            });
+        });
+
+        // ============================================================
+        // NGARKO EVENTIN
+        // ============================================================
+        let currentEvent = null;
+
+        async function loadEvent() {
+            try {
+                const response = await fetch(`/api/events/${eventId}`);
+                if (!response.ok) {
+                    throw new Error('Eventi nuk u gjet');
+                }
+                const event = await response.json();
+                currentEvent = event;
+
+                const firstName = event.firstName || 'X';
+                const secondName = event.secondName || 'Y';
+
+                document.getElementById('firstNameDisplay').textContent = firstName;
+                document.getElementById('secondNameDisplay').textContent = secondName;
+
+                loadMemories();
+                return event;
+            } catch (error) {
+                console.error('Gabim:', error);
+                document.getElementById('firstNameDisplay').textContent = 'X';
+                document.getElementById('secondNameDisplay').textContent = 'Y';
+            }
+        }
+
+        // ============================================================
+        // KËRKO TË FTUARIN
+        // ============================================================
+        async function searchGuest() {
+            const name = document.getElementById('guestName').value.trim();
+            const errorEl = document.getElementById('errorMessage');
+            const resultDiv = document.getElementById('result');
+
+            if (!name) {
+                errorEl.textContent = '📝 Ju lutem shkruani emrin tuaj.';
+                errorEl.classList.add('show');
+                resultDiv.classList.remove('show');
+                return;
+            }
+
+            errorEl.classList.remove('show');
+
+            try {
+                const response = await fetch(`/api/events/${eventId}/guest/${encodeURIComponent(name)}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('tableNumber').textContent = data.tableNumber;
+
+                    const guestList = document.getElementById('guestList');
+                    const currentName = name.trim();
+
+                    guestList.innerHTML = data.tableGuests.map(g => {
+                        const isCurrent = g.name.toLowerCase() === currentName.toLowerCase();
+                        const initial = g.name.charAt(0).toUpperCase();
+                        return `
+                            <div class="guest-item ${isCurrent ? 'current' : ''}">
+                                <div class="avatar">${initial}</div>
+                                <span class="name">${g.name}</span>
+                                <span class="badge">${isCurrent ? '👈 Ju' : 'Tavolinë ' + g.table}</span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    resultDiv.classList.add('show');
+                    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    document.querySelectorAll('.map-section, .share-section').forEach(el => {
+                        el.classList.remove('open');
+                    });
+                    document.querySelectorAll('.footer-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelector('.footer-btn[data-section="map"]').classList.add('active');
+
+                } else {
+                    errorEl.textContent = data.error || '❌ Emri nuk u gjet.';
+                    errorEl.classList.add('show');
+                    resultDiv.classList.remove('show');
+                }
+            } catch (error) {
+                errorEl.textContent = '❌ Gabim në lidhje me serverin.';
+                errorEl.classList.add('show');
+                resultDiv.classList.remove('show');
+            }
+        }
+
+        // ============================================================
+        // VALIDIMI I VIDEOS - 1 MINUTË MAKSIMUM
+        // ============================================================
+        function validateVideoDuration(file) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.src = URL.createObjectURL(file);
+
+                video.onloadedmetadata = function() {
+                    const duration = video.duration;
+                    URL.revokeObjectURL(video.src);
+                    if (duration > 60) {
+                        reject(new Error('Video është më e gjatë se 1 minutë. Ju lutem shkurtojeni ose zgjidhni një video tjetër.'));
+                    } else {
+                        resolve(duration);
+                    }
+                };
+
+                video.onerror = function() {
+                    reject(new Error('Nuk mund të lexohet kohëzgjatja e videos.'));
+                };
+            });
+        }
+
+        // ============================================================
+        // HARTË INTERAKTIVE
+        // ============================================================
+        function renderMap(event) {
+            const container = document.getElementById('mapContainer');
+            if (!container) return;
+
+            const occupancy = {};
+            event.guests.forEach(g => {
+                occupancy[g.table] = (occupancy[g.table] || 0) + 1;
+            });
+
+            const layout = event.layout || getDefaultLayout();
+            const maxRow = Math.max(...layout.map(l => l.row));
+            const maxCol = Math.max(...layout.map(l => l.col));
+
+            const grid = {};
+            layout.forEach(item => {
+                grid[`${item.row}-${item.col}`] = item.table;
+            });
+
+            const cols = maxCol + 1;
+            const rows = maxRow + 1;
+
+            container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            container.innerHTML = '';
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const key = `${r}-${c}`;
+                    const tableNum = grid[key];
+
+                    if (tableNum) {
+                        const count = occupancy[tableNum] || 0;
+                        const isOccupied = count > 0;
+                        const guests = event.guests.filter(g => g.table === tableNum);
+
+                        const div = document.createElement('div');
+                        div.className = `map-table-clickable ${isOccupied ? 'occupied' : 'empty'}`;
+                        div.dataset.table = tableNum;
+                        div.innerHTML = `
+                            <div class="num">${tableNum}</div>
+                            <div class="label-small">Tavolinë</div>
+                            <div class="count">${isOccupied ? `👤 ${count}` : '🪑 Lirë'}</div>
+                        `;
+
+                        div.addEventListener('click', function() {
+                            selectTable(tableNum, guests, event);
+                        });
+
+                        container.appendChild(div);
+                    } else {
+                        const div = document.createElement('div');
+                        div.className = 'map-empty';
+                        container.appendChild(div);
+                    }
+                }
+            }
+
+            if (event.guests.length > 0) {
+                const firstTable = event.guests[0].table;
+                const guests = event.guests.filter(g => g.table === firstTable);
+                setTimeout(() => selectTable(firstTable, guests, event), 300);
+            }
+        }
+
+        function getDefaultLayout() {
+            const layout = [];
+            let tableNum = 1;
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 5; c++) {
+                    layout.push({ table: tableNum++, row: r, col: c });
+                }
+            }
+            return layout;
+        }
+
+        function selectTable(tableNum, guests, event) {
+            document.querySelectorAll('.map-table-clickable').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.map-table-clickable').forEach(el => {
+                if (parseInt(el.dataset.table) === tableNum) el.classList.add('selected');
+            });
+
+            const infoDiv = document.getElementById('tableInfo');
+            const title = document.getElementById('selectedTableTitle');
+            const guestList = document.getElementById('selectedTableGuests');
+
+            infoDiv.classList.add('show');
+            title.textContent = `📍 Tavolina ${tableNum}`;
+
+            const allGuests = event.guests.filter(g => g.table === tableNum);
+            guestList.innerHTML = allGuests.length > 0 ? `👤 ${allGuests.map(g => g.name).join(', ')}` : '🪑 Kjo tavolinë është e lirë';
+        }
+
+        // ============================================================
+        // KUJTIMET
+        // ============================================================
+        async function loadMemories() {
+            try {
+                const response = await fetch(`/api/events/${eventId}/memories`);
+                const memories = await response.json();
+                const gallery = document.getElementById('contentGallery');
+
+                if (memories.length === 0) {
+                    loadSharedContent();
+                    return;
+                }
+
+                const sorted = [...memories].reverse();
+                gallery.innerHTML = sorted.map(m => `
+                    <div class="memory-item">
+                        <div class="mem-header">
+                            <strong>${m.name}</strong>
+                            <span>Tavolina ${m.table}</span>
+                        </div>
+                        <div class="mem-text">💬 ${m.text}</div>
+                        <div class="mem-time">${new Date(m.timestamp).toLocaleString('sq-AL')}</div>
+                    </div>
+                `).join('');
+
+                loadSharedContent();
+            } catch (error) {
+                console.error('Gabim:', error);
+                loadSharedContent();
+            }
+        }
+
+        // ============================================================
+        // SHPËRNDA GËZIMIN - ME NGARKIM NË CLOUDINARY + VALIDIM 1 MINUTË
+        // ============================================================
+        document.getElementById('shareType').addEventListener('change', function() {
+            const fileGroup = document.getElementById('fileInputGroup');
+            const messageGroup = document.getElementById('messageInputGroup');
+
+            if (this.value === 'message') {
+                fileGroup.style.display = 'none';
+                messageGroup.style.display = 'block';
+            } else {
+                fileGroup.style.display = 'block';
+                messageGroup.style.display = 'none';
+            }
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', async function() {
+            const name = document.getElementById('shareName').value.trim();
+            const type = document.getElementById('shareType').value;
+            const message = document.getElementById('shareMessage').value.trim();
+            const file = document.getElementById('shareFile').files[0];
+
+            if (!name) {
+                alert('📝 Ju lutem shkruani emrin tuaj.');
+                return;
+            }
+
+            if (type === 'message' && !message) {
+                alert('💬 Ju lutem shkruani një urim.');
+                return;
+            }
+
+            if (type !== 'message' && !file) {
+                alert('📸 Ju lutem zgjidhni një foto ose video.');
+                return;
+            }
+
+            if (type === 'message') {
+                try {
+                    const response = await fetch(`/api/events/${eventId}/memory`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, text: message, table: 1 })
+                    });
+
+                    if (response.ok) {
+                        alert('✅ Urimi u dërgua me sukses! 🎉');
+                        document.getElementById('shareMessage').value = '';
+                        document.getElementById('shareName').value = '';
+                        loadMemories();
+                    } else {
+                        const error = await response.json();
+                        alert('❌ Gabim: ' + error.error);
+                    }
+                } catch (error) {
+                    alert('❌ Gabim në lidhje me serverin: ' + error.message);
+                }
+            } else {
+                // Për foto dhe video - validimi dhe ngarkimi
+                try {
+                   // VALIDIMI: Kontrollo kohëzgjatjen për video (Çaktivizuar për testim)
+                    if (type === 'video') {
+                    console.log('🎬 Video validation skipped for testing');
+                    }
+
+                    // Shfaq progresin
+                    document.getElementById('uploadProgress').style.display = 'block';
+                    document.getElementById('progressBar').style.width = '0%';
+                    document.getElementById('progressText').textContent = 'Duke përgatitur skedarin...';
+
+                    const formData = new FormData();
+                    formData.append('video', file);
+                    formData.append('eventId', eventId);
+
+                    const response = await fetch('/api/upload-video', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+
+                        // Ruaj në localStorage me URL-në nga Cloudinary
+                        const contentData = {
+                            name: name,
+                            type: type,
+                            message: message || '',
+                            fileData: result.url,
+                            fileName: file.name,
+                            fileType: file.type,
+                            timestamp: new Date().toISOString(),
+                            cloudinaryId: result.public_id,
+                            isCloudinary: true
+                        };
+
+                        const existing = JSON.parse(localStorage.getItem('festo_shared_' + eventId) || '[]');
+                        existing.push(contentData);
+                        localStorage.setItem('festo_shared_' + eventId, JSON.stringify(existing));
+
+                        document.getElementById('progressBar').style.width = '100%';
+                        document.getElementById('progressText').textContent = '✅ Ngarkimi u përfundua!';
+
+                        setTimeout(() => {
+                            document.getElementById('uploadProgress').style.display = 'none';
+                            document.getElementById('progressBar').style.width = '0%';
+                        }, 1500);
+
+                        alert('✅ Përmbajtja u shpërnda me sukses! 🎉');
+                        document.getElementById('shareName').value = '';
+                        document.getElementById('shareFile').value = '';
+                        loadSharedContent();
+                    } else {
+                        const error = await response.json();
+                        alert('❌ Gabim në ngarkim: ' + (error.error || 'Provoni përsëri'));
+                        document.getElementById('uploadProgress').style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('❌ Gabim:', error);
+                    alert('❌ Gabim në lidhje me serverin: ' + error.message);
+                    document.getElementById('uploadProgress').style.display = 'none';
+                }
+            }
+        });
+
+        // ============================================================
+        // NGARKO PËRMBAJTJEN E NDARË (FOTO/VIDEO)
+        // ============================================================
+        function loadSharedContent() {
+            const gallery = document.getElementById('contentGallery');
+            const data = JSON.parse(localStorage.getItem('festo_shared_' + eventId) || '[]');
+
+            if (data.length === 0) {
+                gallery.innerHTML =
+                    '<div class="memory-empty">📭 Ende nuk ka momente të ndara. Bëhu i pari!</div>';
+                return;
+            }
+
+            const items = data.map(item => {
+                let contentHtml = '';
+                if (item.type === 'photo') {
+                    const src = item.isCloudinary ? item.fileData : item.fileData;
+                    contentHtml =
+                        `<img src="${src}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:8px;">`;
+                } else if (item.type === 'video') {
+                    const src = item.isCloudinary ? item.fileData : item.fileData;
+                    contentHtml = `
+                        <video src="${src}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:8px;" controls>
+                            Shfletuesi juaj nuk mbështet videon.
+                        </video>
+                    `;
+                }
+
+                return `
+                    <div class="memory-item">
+                        <div class="mem-header">
+                            <strong>${item.name}</strong>
+                            <span>${item.type === 'photo' ? '📸 Foto' : '🎥 Video'}</span>
+                        </div>
+                        ${item.message ? `<div class="mem-text">💬 ${item.message}</div>` : ''}
+                        ${contentHtml}
+                        <div class="mem-time">${new Date(item.timestamp).toLocaleString('sq-AL')}</div>
+                    </div>
+                `;
+            }).join('');
+
+            gallery.innerHTML = items;
+        }
+
+        // ============================================================
+        // UPLOAD ZONE
+        // ============================================================
+        document.getElementById('uploadZone')?.addEventListener('click', function() {
+            document.getElementById('shareFile').click();
+        });
+
+        document.getElementById('shareFile')?.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const zone = document.getElementById('uploadZone');
+                const file = this.files[0];
+                zone.innerHTML = `✅ ${file.name}<div class="text">Kliko për të ndryshuar</div>`;
+            }
+        });
+
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEvent();
+        });
+
+        document.getElementById('searchBtn').addEventListener('click', searchGuest);
+        document.getElementById('guestName').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') searchGuest();
+        });
+
+        document.getElementById('guestName').addEventListener('input', () => {
+            document.getElementById('errorMessage').classList.remove('show');
+        });
+    </script>
+
+</body>
+</html>
