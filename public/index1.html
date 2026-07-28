@@ -8,8 +8,6 @@
     <style>
         /* ============================================================
            FESTO PREMIUM - index.html
-           Ari + Bardhë + E zezë
-           Dy fusha: Emri i parë dhe Emri i dytë
            ============================================================ */
 
         * {
@@ -290,6 +288,39 @@
             background: var(--festo-black);
         }
 
+        .btn-pdf {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto 0;
+            padding: 14px 20px;
+            background: var(--festo-gold);
+            color: var(--festo-white);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .btn-pdf:hover {
+            background: var(--festo-gold-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 168, 76, 0.3);
+        }
+
+        .btn-pdf:active {
+            transform: translateY(0);
+            background: var(--festo-gold);
+        }
+
         .result {
             margin-top: 20px;
             padding: 25px;
@@ -423,6 +454,28 @@
             background: #dc3545;
         }
 
+        .btn-pdf-sm {
+            padding: 6px 16px;
+            background: var(--festo-gold);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .btn-pdf-sm:hover {
+            background: var(--festo-gold-dark);
+        }
+
+        .btn-pdf-sm:active {
+            background: var(--festo-gold);
+        }
+
         .no-events {
             color: #999;
             text-align: center;
@@ -465,7 +518,7 @@
             .admin-event { flex-direction: column; gap: 10px; }
             .admin-event .actions { width: 100%; }
             .admin-event .actions button { flex: 1; }
-            .btn-primary, .btn-secondary { max-width: 300px; padding: 14px 16px; font-size: 0.95rem; }
+            .btn-primary, .btn-secondary, .btn-pdf { max-width: 300px; padding: 14px 16px; font-size: 0.95rem; }
         }
 
         @media (max-width: 400px) {
@@ -479,7 +532,7 @@
             .d3 { font-size: 0.9rem; }
             .d4 { font-size: 0.6rem; }
             .d5 { font-size: 0.4rem; }
-            .btn-primary, .btn-secondary { max-width: 100%; padding: 12px 14px; font-size: 0.85rem; }
+            .btn-primary, .btn-secondary, .btn-pdf { max-width: 100%; padding: 12px 14px; font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -538,13 +591,18 @@
         <!-- REZULTATI -->
         <div class="result" id="result">
             <h3 style="color:var(--festo-black);">✅ Eventi u krijua!</h3>
+            
             <div class="qr-code" id="qrCodeContainer"></div>
+            
             <p><strong>Linku i eventit:</strong></p>
             <div class="event-link" id="eventLink"></div>
             <p style="margin-top:10px; color:var(--festo-gray); font-size:0.9rem;">
                 📱 Të ftuarit skanojnë QR kodin ose klikojnë linkun
             </p>
-            <button class="btn-secondary" onclick="loadAdminEvents()">📊 Shiko të gjitha eventet</button>
+            <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+                <button class="btn-secondary" onclick="loadAdminEvents()">📊 Shiko të gjitha eventet</button>
+                <button class="btn-pdf" id="pdfBtn" style="display:none;">📄 Shkarko PDF me QR Kod</button>
+            </div>
         </div>
 
         <!-- PANELI ADMIN -->
@@ -563,9 +621,21 @@
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- LIBRARITË PËR PDF -->
+    <!-- ============================================================ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+
     <script>
         // ============================================================
-        // KRIJO EVENT - DËRGON firstName DHE secondName
+        // VARIABLA GLOBALE
+        // ============================================================
+        let currentEventId = null;
+        let currentQrCodeDataUrl = null;
+
+        // ============================================================
+        // KRIJO EVENT
         // ============================================================
         async function createNewEvent() {
             const firstName = document.getElementById('organizerFirstName').value.trim();
@@ -599,19 +669,16 @@
                 return;
             }
 
-            // Emri i eventit = "firstName & secondName"
             const eventName = `${firstName} & ${secondName}`;
 
             const eventData = {
                 eventName: eventName,
-                firstName: firstName,   // ← DËRGON EMRIN E PARË
-                secondName: secondName, // ← DËRGON EMRIN E DYTË
+                firstName: firstName,
+                secondName: secondName,
                 date: eventDate || new Date().toISOString().split('T')[0],
                 venue: eventVenue || 'Vend i pacaktuar',
                 guests
             };
-
-            console.log('📤 Duke dërguar:', eventData);
 
             try {
                 const response = await fetch('/api/events', {
@@ -623,6 +690,9 @@
                 const result = await response.json();
 
                 if (response.ok) {
+                    currentEventId = result.eventId;
+                    currentQrCodeDataUrl = result.qrCode;
+
                     const resultDiv = document.getElementById('result');
                     resultDiv.classList.add('show');
 
@@ -632,8 +702,15 @@
 
                     document.getElementById('eventLink').textContent = result.qrUrl;
 
+                    document.getElementById('pdfBtn').style.display = 'block';
+                    document.getElementById('pdfBtn').onclick = function() {
+                        downloadPdf(currentEventId);
+                    };
+
                     document.getElementById('organizerFirstName').value = '';
                     document.getElementById('organizerSecondName').value = '';
+                    document.getElementById('eventDate').value = '';
+                    document.getElementById('eventVenue').value = '';
                     document.getElementById('guestList').value = '';
 
                     loadAdminEvents();
@@ -674,6 +751,7 @@
                         </div>
                         <div class="actions">
                             <button class="btn-view" onclick="viewEvent('${event.id}')">👁️ Shiko</button>
+                            <button class="btn-pdf-sm" onclick="downloadPdf('${event.id}')">📄 PDF</button>
                             <button class="btn-delete" onclick="deleteEvent('${event.id}')">🗑️ Fshi</button>
                         </div>
                     </div>
@@ -713,6 +791,203 @@
             } catch (error) {
                 alert('❌ Gabim: ' + error.message);
             }
+        }
+
+        // ============================================================
+        // GJENERO PDF - TË TREJA TË BARABARTA
+        // ============================================================
+        async function downloadPdf(eventId) {
+            try {
+                let qrCodeDataUrl = currentQrCodeDataUrl;
+                
+                if (!qrCodeDataUrl) {
+                    const response = await fetch(`/api/events/${eventId}`);
+                    const event = await response.json();
+                    qrCodeDataUrl = event.qrCode;
+                }
+
+                const response = await fetch(`/api/events/${eventId}`);
+                const event = await response.json();
+
+                if (!event) {
+                    alert('❌ Eventi nuk u gjet');
+                    return;
+                }
+
+                generatePdf(event, qrCodeDataUrl);
+            } catch (error) {
+                console.error('Gabim:', error);
+                alert('❌ Gabim në gjenerimin e PDF-it: ' + error.message);
+            }
+        }
+
+        function generatePdf(event, qrCodeDataUrl) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            const gold = '#D4A84C';
+            const black = '#1A1A1A';
+            const gray = '#888888';
+            const centerX = 105;
+            
+            // ========================================
+            // HEADER
+            // ========================================
+            
+            // 1. FESTO - me 'O' të artë
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(48);
+            doc.setTextColor(black);
+            
+            const festWidth = doc.getTextWidth('Fest');
+            const startX = centerX - (festWidth + 20) / 2;
+            
+            doc.text('Fest', startX, 45, { align: 'left' });
+            
+            doc.setTextColor(gold);
+            doc.text('O', startX + festWidth, 45, { align: 'left' });
+            
+            // 2. TAGLINE - PA YJE
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.setTextColor(gray);
+            doc.text('Find Your Place. Share Your Joy.', centerX, 57, { align: 'center' });
+            
+            // 3. EMRAT (a & e)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(30);
+            doc.setTextColor(gold);
+            doc.text(`${event.firstName} & ${event.secondName}`, centerX, 80, { align: 'center' });
+            
+            // ========================================
+            // QR KODI
+            // ========================================
+            if (qrCodeDataUrl) {
+                try {
+                    const qrSize = 70;
+                    const xPos = (210 - qrSize) / 2;
+                    const yPos = 90;
+                    doc.addImage(qrCodeDataUrl, 'PNG', xPos, yPos, qrSize, qrSize);
+                    
+                    const startY = yPos + qrSize + 15;
+                    
+                    // ========================================
+                    // "SKANO KODIN QR" - BOLD
+                    // ========================================
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(16);
+                    doc.setTextColor(black);
+                    doc.text('SKANO KODIN QR', centerX, startY, { align: 'center' });
+                    
+                    // ========================================
+                    // TË TREJA FUNKSIONALITETET - TË BARABARTA
+                    // ========================================
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(14);
+                    doc.setTextColor(black);
+                    
+                    const items = [
+                        'Gjej tavolinën',
+                        'Shiko hartën',
+                        'Ndaj kujtimet'
+                    ];
+                    
+                    let itemY = startY + 10;
+                    items.forEach(item => {
+                        itemY += 9;
+                        doc.text(item, centerX, itemY, { align: 'center' });
+                    });
+                    
+                    // ========================================
+                    // DETAJET E EVENTIT
+                    // ========================================
+                    const detailsY = itemY + 22;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(16);
+                    doc.setTextColor(black);
+                    doc.text(`Dasma e ${event.firstName} & ${event.secondName}`, centerX, detailsY, { align: 'center' });
+                    
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(14);
+                    doc.setTextColor(gray);
+                    
+                    let detailsLine = `Data: ${new Date(event.date).toLocaleDateString('sq-AL')}`;
+                    if (event.venue) {
+                        detailsLine += `  Vendi: ${event.venue}`;
+                    }
+                    doc.text(detailsLine, centerX, detailsY + 10, { align: 'center' });
+                    
+                    doc.setFontSize(13);
+                    doc.setTextColor(gray);
+                    doc.text(`Te ftuar: ${event.guests.length}`, centerX, detailsY + 22, { align: 'center' });
+                    
+                } catch (error) {
+                    console.error('Gabim me QR:', error);
+                    generatePdfWithoutQr(doc, event);
+                }
+            } else {
+                generatePdfWithoutQr(doc, event);
+            }
+            
+            // ========================================
+            // FOOTER
+            // ========================================
+            doc.setFontSize(8);
+            doc.setTextColor('#CCCCCC');
+            doc.text('FestO · Find Your Place. Share Your Joy.', centerX, 285, { align: 'center' });
+            
+            doc.save(`FestO_${event.firstName}_${event.secondName}.pdf`);
+        }
+
+        // ============================================================
+        // FUNKSIONI NDIHMËS - PA QR KOD
+        // ============================================================
+        function generatePdfWithoutQr(doc, event) {
+            const centerX = 105;
+            const gray = '#888888';
+            const black = '#1A1A1A';
+            
+            const startY = 120;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(black);
+            doc.text('SKANO KODIN QR', centerX, startY, { align: 'center' });
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(14);
+            doc.setTextColor(black);
+            
+            const items = [
+                'Gjej tavolinën',
+                'Shiko hartën',
+                'Ndaj kujtimet'
+            ];
+            
+            let itemY = startY + 10;
+            items.forEach(item => {
+                itemY += 9;
+                doc.text(item, centerX, itemY, { align: 'center' });
+            });
+            
+            const detailsY = itemY + 22;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.setTextColor(black);
+            doc.text(`Dasma e ${event.firstName} & ${event.secondName}`, centerX, detailsY, { align: 'center' });
+            
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(14);
+            doc.setTextColor(gray);
+            
+            let detailsLine = `Data: ${new Date(event.date).toLocaleDateString('sq-AL')}`;
+            if (event.venue) {
+                detailsLine += `  Vendi: ${event.venue}`;
+            }
+            doc.text(detailsLine, centerX, detailsY + 10, { align: 'center' });
+
+            doc.setFontSize(13);
+            doc.setTextColor(gray);
+            doc.text(`Te ftuar: ${event.guests.length}`, centerX, detailsY + 22, { align: 'center' });
         }
 
         // ============================================================
