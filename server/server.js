@@ -85,7 +85,9 @@ app.post('/api/events', (req, res) => {
     }
 
     const eventId = uuidv4();
-    const qrUrl = `http://localhost:${PORT}/event/${eventId}`;
+  const host = req.get('host');
+const protocol = req.get('x-forwarded-proto') || 'https';
+const qrUrl = `${protocol}://${host}/event/${eventId}`;
 
     QRCode.toDataURL(qrUrl, (err, qrCode) => {
         if (err) {
