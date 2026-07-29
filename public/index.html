@@ -806,7 +806,7 @@
                     qrCodeDataUrl = event.qrCode;
                 }
 
-                const response = await fetch(`/https://festo-platform.onrender.com/api/events/${eventId}`);
+                const response = await fetch(`https://festo-platform.onrender.com/api/events/${eventId}`);
                 const event = await response.json();
 
                 if (!event) {
