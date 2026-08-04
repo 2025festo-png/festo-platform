@@ -1,8 +1,18 @@
-import dns from 'node:dns';
+// ============================================================
+// KONFIGURIMI I DNS (ZGJIDHJA GLOBALE PËR PROBLEMET IPV6/SUPABASE)
+// ============================================================
+if (globalThis.process && typeof URL !== 'undefined') {
+    const dns = require('node:dns');
+    if (dns && typeof dns.setDefaultResultOrder === 'function') {
+        dns.setDefaultResultOrder('ipv4first');
+    }
+}
 
 require('dotenv').config();
-const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
+const express = require('express');
+const cors = require('cors');
+// ... pjesa tjetër e kodit tuaj vijon e njëjtë më poshtë
+
 const express = require('express');
 const cors = require('cors');
 const QRCode = require('qrcode');
