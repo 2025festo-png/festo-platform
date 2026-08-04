@@ -1,3 +1,5 @@
+import dns from 'node:dns';
+
 require('dotenv').config();
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first');
