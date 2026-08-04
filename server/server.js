@@ -73,8 +73,13 @@ const dbUrl = process.env.DATABASE_URL;
 console.log('📋 DATABASE_URL starts with:', dbUrl.substring(0, 30) + '...');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    host: 'aws-0-eu-west-1.pooler.supabase.com',
+    port: 5432,
+    user: 'postgres.cwotvuegyhiviyigeonw',
+    password: '@gesaDE20111009',
+    database: 'postgres',
+    ssl: { rejectUnauthorized: false },
+    statement_cache_size: 0
 });
 
 pool.connect((err) => {
