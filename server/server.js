@@ -51,6 +51,24 @@ app.use(express.static('public'));
 // ============================================================
 // LIDHJA ME SUPABASE (POSTGRESQL)
 // ============================================================
+const { Pool } = require('pg');
+
+// ============================================================
+// KONTROLLO DATABASE_URL
+// ============================================================
+console.log('🔍 Checking DATABASE_URL...');
+console.log('📋 DATABASE_URL exists:', !!process.env.DATABASE_URL);
+console.log('📋 DATABASE_URL length:', process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0);
+
+if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL is not set!');
+    process.exit(1);
+}
+
+// Lexo URL-në dhe verifiko format
+const dbUrl = process.env.DATABASE_URL;
+console.log('📋 DATABASE_URL starts with:', dbUrl.substring(0, 30) + '...');
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false }
@@ -58,7 +76,7 @@ const pool = new Pool({
 
 pool.connect((err) => {
     if (err) {
-        console.error('❌ Gabim në lidhjen me databasen:', err);
+        console.error('❌ Database connection error:', err);
     } else {
         console.log('✅ Database connected successfully');
     }
