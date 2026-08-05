@@ -8,7 +8,6 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { Readable } = require('stream');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,11 +38,14 @@ const upload = multer({
 });
 
 // ============================================================
-// MIDDLEWARE
+// RRUGËT PËR FAQET - ZGJIDHJE ALTERNATIVE
 // ============================================================
+const publicPath = path.join(__dirname, '..', 'public');
+console.log('📂 Public path:', publicPath);
+
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(publicPath));
 
 // ============================================================
 // FUNKSIONI NDIHMËS PËR GUESTS
@@ -470,32 +472,42 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
 });
 
 // ============================================================
-// RRUGËT PËR FAQET - ME KONTROLL
+// RRUGËT PËR FAQET - ME PUBLIC PATH TË QARTË
 // ============================================================
 app.get('/event/:eventId', (req, res) => {
-    const filePath = path.join(__dirname, 'public', 'event.html');
-    console.log('📋 Serving event.html from:', filePath);
-    
-    // Kontrollo nëse skedari ekziston
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        console.error('❌ event.html not found at:', filePath);
-        res.status(404).send('event.html not found');
-    }
+    res.sendFile(path.join(publicPath, 'event.html'));
 });
 
 app.get('/', (req, res) => {
-    const filePath = path.join(__dirname, 'public', 'index.html');
-    console.log('📋 Serving index.html from:', filePath);
+    res.sendFile(path.join(publicPath, 'index.html'));
+});
+
+// ============================================================
+// TEST PËR TË PARË SE KU JANË SKEDARËT
+// ============================================================
+app.get('/test-files', (req, res) => {
+    const fs = require('fs');
+    const results = {
+        publicPath: publicPath,
+        indexExists: fs.existsSync(path.join(publicPath, 'index.html')),
+        eventExists: fs.existsSync(path.join(publicPath, 'event.html')),
+        files: {}
+    };
     
-    // Kontrollo nëse skedari ekziston
-    if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
-    } else {
-        console.error('❌ index.html not found at:', filePath);
-        res.status(404).send('index.html not found');
-    }
+    // Kontrollo nëse index.html ekziston në vende të ndryshme
+    const paths = [
+        path.join(__dirname, '../public/index.html'),
+        path.join(__dirname, 'public/index.html'),
+        path.join(__dirname, '../../public/index.html'),
+        path.join(process.cwd(), 'public/index.html'),
+        path.join(process.cwd(), '../public/index.html')
+    ];
+    
+    paths.forEach(p => {
+        results.files[p] = fs.existsSync(p);
+    });
+    
+    res.json(results);
 });
 
 // ============================================================
@@ -503,6 +515,5 @@ app.get('/', (req, res) => {
 // ============================================================
 app.listen(PORT, () => {
     console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
-    console.log(`📂 __dirname: ${__dirname}`);
-    console.log(`📂 Public path: ${path.join(__dirname, 'public')}`);
+    console.log(`📂 Public path: ${publicPath}`);
 });
