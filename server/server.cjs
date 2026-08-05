@@ -270,6 +270,39 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
     }
 });
 // ============================================================
+// 4. API - MERK MEDIAT (FOTO/VIDEO) PËR NJË EVENT SPECIFIK
+// ============================================================
+app.get('/api/events/:eventId/media', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const result = await pool.query(
+            'SELECT id, event_id, name, type, message, file_url, thumbnail_url, table_number, created_at FROM media WHERE event_id = $1::uuid ORDER BY created_at DESC',
+            [eventId]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('❌ Error fetching media:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
+// 5. API - MERK MEMORIES (URIMET) PËR NJË EVENT SPECIFIK
+// ============================================================
+app.get('/api/events/:eventId/memories', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const result = await pool.query(
+            'SELECT id, event_id, name, text, table_number, timestamp FROM memories WHERE event_id = $1::uuid ORDER BY timestamp DESC',
+            [eventId]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('❌ Error fetching memories:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+// ============================================================
 // API - MERK TË GJITHA EVENTET PËR ADMIN
 // ============================================================
 app.get('/api/admin/events', async (req, res) => {
