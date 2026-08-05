@@ -27,7 +27,7 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
+    limits: { fileSize: 100 * 1024 * 1024 },
     fileFilter: function(req, file, cb) {
         if (file.mimetype.startsWith('video/') || file.mimetype.startsWith('image/')) {
             cb(null, true);
@@ -42,7 +42,7 @@ const upload = multer({
 // ============================================================
 app.use(cors());
 app.use(express.json({ limit: '100mb' }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================================
 // FUNKSIONI NDIHMËS PËR GUESTS
@@ -140,6 +140,8 @@ app.post('/api/events', async (req, res) => {
 app.get('/api/events/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params;
+        console.log('📋 Fetching event with ID:', eventId);
+
         const result = await pool.query(
             'SELECT * FROM events WHERE id = $1',
             [eventId]
@@ -179,6 +181,8 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         const { eventId, name } = req.params;
         const decodedName = decodeURIComponent(name).trim();
 
+        console.log(`🔍 Kërkohet: "${decodedName}" në eventin: ${eventId}`);
+
         const result = await pool.query(
             'SELECT guests FROM events WHERE id = $1',
             [eventId]
@@ -197,7 +201,10 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         const guest = guests.find(g => g.name.toLowerCase() === decodedName.toLowerCase());
 
         if (!guest) {
-            return res.status(404).json({ error: 'I ftuari nuk u gjet' });
+            return res.status(404).json({ 
+                error: `I ftuari "${decodedName}" nuk u gjet`,
+                availableGuests: guests.map(g => g.name)
+            });
         }
 
         const tableGuests = guests.filter(g => g.table === guest.table);
@@ -458,14 +465,14 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
 // SHËRBEJE FAQEN E EVENTIT
 // ============================================================
 app.get('/event/:eventId', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/event.html'));
+    res.sendFile(path.join(__dirname, 'public', 'event.html'));
 });
 
 // ============================================================
 // SHËRBEJE FAQEN KRYESORE
 // ============================================================
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ============================================================
