@@ -8,6 +8,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 const { Readable } = require('stream');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -78,6 +79,13 @@ pool.connect((err) => {
     } else {
         console.log('✅ Database connected successfully');
     }
+});
+
+// ============================================================
+// API - TEST
+// ============================================================
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'Serveri funksionon! 🚀' });
 });
 
 // ============================================================
@@ -462,17 +470,32 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
 });
 
 // ============================================================
-// SHËRBEJE FAQEN E EVENTIT
+// RRUGËT PËR FAQET - ME KONTROLL
 // ============================================================
 app.get('/event/:eventId', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'event.html'));
+    const filePath = path.join(__dirname, 'public', 'event.html');
+    console.log('📋 Serving event.html from:', filePath);
+    
+    // Kontrollo nëse skedari ekziston
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        console.error('❌ event.html not found at:', filePath);
+        res.status(404).send('event.html not found');
+    }
 });
 
-// ============================================================
-// SHËRBEJE FAQEN KRYESORE
-// ============================================================
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    const filePath = path.join(__dirname, 'public', 'index.html');
+    console.log('📋 Serving index.html from:', filePath);
+    
+    // Kontrollo nëse skedari ekziston
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        console.error('❌ index.html not found at:', filePath);
+        res.status(404).send('index.html not found');
+    }
 });
 
 // ============================================================
@@ -480,4 +503,6 @@ app.get('/', (req, res) => {
 // ============================================================
 app.listen(PORT, () => {
     console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
+    console.log(`📂 __dirname: ${__dirname}`);
+    console.log(`📂 Public path: ${path.join(__dirname, 'public')}`);
 });
