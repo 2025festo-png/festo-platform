@@ -175,11 +175,15 @@ app.post('/api/events', async (req, res) => {
             }
         }
 
+        // Sigurohemi që të dhënat JSON bëhen string përpara se të futen në databazë
+        const guestsJson = JSON.stringify(guests);
+        const layoutJson = JSON.stringify(defaultLayout);
+
         const result = await pool.query(
             `INSERT INTO events (id, event_name, first_name, second_name, date, venue, guests, qr_code, layout)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+             VALUES ($1::uuid, $2, $3, $4, $5, $6, $7::jsonb, $8, $9::jsonb)
              RETURNING id`,
-            [eventId, eventName, firstName, secondName, date, venue, JSON.stringify(guests), qrCode, JSON.stringify(defaultLayout)]
+            [eventId, eventName, firstName, secondName, date || null, venue || null, guestsJson, qrCode, layoutJson]
         );
 
         res.status(201).json({
