@@ -269,7 +269,20 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
+// ============================================================
+// API - MERK TË GJITHA EVENTET PËR ADMIN
+// ============================================================
+app.get('/api/admin/events', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, event_name, first_name, second_name, date, venue, created_at FROM events ORDER BY created_at DESC'
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('❌ Error fetching admin events:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 // NIS SERVERIN
 app.listen(PORT, () => {
