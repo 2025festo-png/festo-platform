@@ -283,6 +283,18 @@ app.get('/api/admin/events', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+// ============================================================
+// API - SHËRBE FAQEN EVENT.HTML PËR TË FTUARIT
+// ============================================================
+app.get('/event/:eventId', (req, res) => {
+    try {
+        // Shërbehet skedari event.html që ndodhet brenda dosjes public
+        res.sendFile(path.join(__dirname, '../public', 'event.html'));
+    } catch (error) {
+        console.error('❌ Gabim në ngarkimin e faqes së eventit:', error);
+        res.status(500).send('Gabim në server gjatë ngarkimit të faqes.');
+    }
+});
 
 // NIS SERVERIN
 app.listen(PORT, () => {
