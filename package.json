@@ -2,10 +2,10 @@
   "name": "festo-platform",
   "version": "1.0.0",
   "description": "FestO - Platforma e Dasmave dhe Eventeve",
-  "main": "server/server.js",
+  "main": "server.cjs",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "nodemon server/server.js"
+    "start": "node server.cjs",
+    "dev": "nodemon server.cjs"
   },
   "dependencies": {
     "cloudinary": "^1.41.0",
