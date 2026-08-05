@@ -68,6 +68,18 @@ pool.connect((err) => {
 });
 
 // ============================================================
+// FUNKSIONI NDIHMËS PËR GUESTS
+// ============================================================
+function parseGuests(guests) {
+    if (!guests) return [];
+    if (Array.isArray(guests)) return guests;
+    if (typeof guests === 'string') {
+        try { return JSON.parse(guests); } catch (e) { return []; }
+    }
+    return [];
+}
+
+// ============================================================
 // API - KRIJO EVENT
 // ============================================================
 app.post('/api/events', async (req, res) => {
@@ -83,7 +95,6 @@ app.post('/api/events', async (req, res) => {
         const host = req.get('host');
         const protocol = req.get('x-forwarded-proto') || 'https';
 
-        // Krijo layout
         const defaultLayout = [];
         let tableNum = 1;
         for (let r = 0; r < 4; r++) {
@@ -92,7 +103,6 @@ app.post('/api/events', async (req, res) => {
             }
         }
 
-        // INSERT pa ID - SERIAL e krijon automatikisht
         const result = await pool.query(
             `INSERT INTO events (event_name, first_name, second_name, date, venue, guests, layout)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -102,11 +112,9 @@ app.post('/api/events', async (req, res) => {
 
         const eventId = result.rows[0].id;
 
-        // Krijo QR kod
         const qrUrl = `${protocol}://${host}/event/${eventId}`;
         const qrCode = await QRCode.toDataURL(qrUrl);
 
-        // Përditëso qr_code
         await pool.query(
             `UPDATE events SET qr_code = $1 WHERE id = $2`,
             [qrCode, eventId]
@@ -141,12 +149,7 @@ app.get('/api/events/:eventId', async (req, res) => {
         }
 
         const event = result.rows[0];
-        
-        // Konverto guests nga JSON
-        let guests = event.guests;
-        if (typeof guests === 'string') {
-            try { guests = JSON.parse(guests); } catch (e) { guests = []; }
-        }
+        const guests = parseGuests(event.guests);
 
         res.json({
             id: event.id,
@@ -155,7 +158,7 @@ app.get('/api/events/:eventId', async (req, res) => {
             secondName: event.second_name,
             date: event.date,
             venue: event.venue,
-            guests: guests || [],
+            guests: guests,
             qrCode: event.qr_code,
             layout: event.layout,
             createdAt: event.created_at
@@ -184,12 +187,9 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
             return res.status(404).json({ error: 'Eventi nuk u gjet' });
         }
 
-        let guests = result.rows[0].guests;
-        if (typeof guests === 'string') {
-            try { guests = JSON.parse(guests); } catch (e) { guests = []; }
-        }
+        const guests = parseGuests(result.rows[0].guests);
 
-        if (!Array.isArray(guests) || guests.length === 0) {
+        if (guests.length === 0) {
             return res.status(404).json({ error: 'Nuk ka të ftuar' });
         }
 
@@ -214,6 +214,159 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
 });
 
 // ============================================================
+// API - MERK MEDIAT
+// ============================================================
+app.get('/api/events/:eventId/media', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const result = await pool.query(
+            'SELECT * FROM media WHERE event_id = $1 ORDER BY created_at DESC',
+            [eventId]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('❌ Error fetching media:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
+// API - MERK KUJTIMET (MEMORIES)
+// ============================================================
+app.get('/api/events/:eventId/memories', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const result = await pool.query(
+            'SELECT * FROM memories WHERE event_id = $1 ORDER BY timestamp DESC',
+            [eventId]
+        );
+        res.json(result.rows);
+    } catch (error) {
+        console.error('❌ Error fetching memories:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
+// API - UPLOAD VIDEO
+// ============================================================
+app.post('/api/upload-video', upload.single('video'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Nuk u gjet asnjë video' });
+        }
+
+        console.log('📥 Video received:', req.file.originalname);
+
+        const file = req.file;
+        const eventId = req.body.eventId || 'unknown';
+
+        const uploadStream = cloudinary.uploader.upload_stream({
+            resource_type: 'video',
+            folder: `festo_videos/${eventId}`,
+            public_id: `${Date.now()}_${file.originalname.replace(/\.[^/.]+$/, '')}`,
+            transformation: [
+                { width: 854, height: 480, crop: 'limit' },
+                { quality: 'auto:low' },
+                { format: 'mp4' },
+                { bit_rate: '800k' },
+                { video_codec: 'h264' }
+            ]
+        }, (error, result) => {
+            if (error) {
+                console.error('❌ Cloudinary error:', error);
+                return res.status(500).json({ error: 'Gabim në ngarkimin e videos' });
+            }
+
+            res.json({
+                success: true,
+                url: result.secure_url,
+                public_id: result.public_id,
+                duration: result.duration
+            });
+        });
+
+        const bufferStream = new Readable();
+        bufferStream.push(file.buffer);
+        bufferStream.push(null);
+        bufferStream.pipe(uploadStream);
+
+    } catch (error) {
+        console.error('❌ Upload error:', error);
+        res.status(500).json({ error: 'Gabim në ngarkimin e videos' });
+    }
+});
+
+// ============================================================
+// API - RUAJ MEDIA
+// ============================================================
+app.post('/api/events/:eventId/media', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { name, type, message, fileUrl, thumbnailUrl, cloudinaryId, tableNumber } = req.body;
+
+        console.log('📥 Saving media:', { eventId, name, type });
+
+        if (!name || !type || !fileUrl) {
+            return res.status(400).json({ error: 'Të dhënat janë të paplota' });
+        }
+
+        const mediaId = uuidv4();
+
+        const result = await pool.query(
+            `INSERT INTO media (id, event_id, name, type, message, file_url, thumbnail_url, cloudinary_id, table_number)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+             RETURNING id`,
+            [mediaId, eventId, name, type, message || '', fileUrl, thumbnailUrl || null, cloudinaryId || null, tableNumber || 1]
+        );
+
+        res.status(201).json({
+            id: result.rows[0].id,
+            message: 'Media u ruajt me sukses!'
+        });
+
+    } catch (error) {
+        console.error('❌ Error saving media:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
+// API - LEJ KUJTIM (URIM)
+// ============================================================
+app.post('/api/events/:eventId/memory', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        const { name, text, table } = req.body;
+
+        if (!name || !text) {
+            return res.status(400).json({ error: 'Të dhënat janë të paplota' });
+        }
+
+        const memoryId = uuidv4();
+
+        const result = await pool.query(
+            `INSERT INTO memories (id, event_id, name, text, table_number)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING id`,
+            [memoryId, eventId, name, text, table || 1]
+        );
+
+        res.status(201).json({
+            id: result.rows[0].id,
+            name,
+            text,
+            table: table || 1,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('❌ Error saving memory:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
 // API - ADMIN - MERK TË GJITHA EVENTET
 // ============================================================
 app.get('/api/admin/events', async (req, res) => {
@@ -222,22 +375,16 @@ app.get('/api/admin/events', async (req, res) => {
             'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
         );
 
-        const events = result.rows.map(e => {
-            let guests = e.guests;
-            if (typeof guests === 'string') {
-                try { guests = JSON.parse(guests); } catch (e) { guests = []; }
-            }
-            return {
-                id: e.id,
-                eventName: e.event_name,
-                firstName: e.first_name,
-                secondName: e.second_name,
-                date: e.date,
-                venue: e.venue,
-                guests: guests || [],
-                createdAt: e.created_at
-            };
-        });
+        const events = result.rows.map(e => ({
+            id: e.id,
+            eventName: e.event_name,
+            firstName: e.first_name,
+            secondName: e.second_name,
+            date: e.date,
+            venue: e.venue,
+            guests: parseGuests(e.guests),
+            createdAt: e.created_at
+        }));
 
         res.json(events);
 
