@@ -238,8 +238,9 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         const { eventId, name } = req.params;
         const decodedName = decodeURIComponent(name);
 
+        // Kontrollojmë nëse eventi ekziston duke përdorur UUID
         const result = await pool.query(
-            'SELECT guests FROM events WHERE id = $1',
+            'SELECT guests FROM events WHERE id = $1::uuid',
             [eventId]
         );
 
@@ -248,7 +249,10 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         }
 
         const guests = result.rows[0].guests;
-        const guest = guests.find(g => g.name.toLowerCase() === decodedName.toLowerCase());
+        
+        // Sigurohemi që guests është varg (array) përpara se të kërkojmë
+        const guestList = Array.isArray(guests) ? guests : JSON.parse(guests);
+        const guest = guestList.find(g => g.name.toLowerCase() === decodedName.toLowerCase());
 
         if (!guest) {
             return res.status(404).json({ error: 'I ftuari nuk u gjet në listë' });
@@ -261,6 +265,7 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // NIS SERVERIN
 app.listen(PORT, () => {
