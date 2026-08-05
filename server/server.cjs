@@ -27,12 +27,12 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 50 * 1024 * 1024 },
+    limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
     fileFilter: function(req, file, cb) {
-        if (file.mimetype.startsWith('video/')) {
+        if (file.mimetype.startsWith('video/') || file.mimetype.startsWith('image/')) {
             cb(null, true);
         } else {
-            cb(new Error('Formati i videos nuk mbështetet'));
+            cb(new Error('Formati i skedarit nuk mbështetet'));
         }
     }
 });
@@ -41,7 +41,7 @@ const upload = multer({
 // MIDDLEWARE
 // ============================================================
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '100mb' }));
 app.use(express.static('public'));
 
 // ============================================================
@@ -68,7 +68,8 @@ if (!process.env.DATABASE_URL) {
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000
 });
 
 pool.connect((err) => {
@@ -227,35 +228,35 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
         const file = req.file;
         const eventId = req.body.eventId || 'unknown';
 
-        const uploadStream = cloudinary.uploader.upload_stream({
-            resource_type: 'video',
-            folder: `festo_videos/${eventId}`,
-            public_id: `${Date.now()}_${file.originalname.replace(/\.[^/.]+$/, '')}`,
-            transformation: [
-                { width: 854, height: 480, crop: 'limit' },
-                { quality: 'auto:low' },
-                { format: 'mp4' },
-                { bit_rate: '800k' },
-                { video_codec: 'h264' }
-            ]
-        }, (error, result) => {
-            if (error) {
-                console.error('❌ Cloudinary error:', error);
-                return res.status(500).json({ error: 'Gabim në ngarkimin e videos: ' + error.message });
-            }
-
-            res.json({
-                success: true,
-                url: result.secure_url,
-                public_id: result.public_id,
-                duration: result.duration
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({
+                resource_type: 'video',
+                folder: `festo_videos/${eventId}`,
+                public_id: `${Date.now()}_${file.originalname.replace(/\.[^/.]+$/, '')}`,
+                transformation: [
+                    { width: 854, height: 480, crop: 'limit' },
+                    { quality: 'auto:low' },
+                    { format: 'mp4' },
+                    { bit_rate: '800k' },
+                    { video_codec: 'h264' }
+                ]
+            }, (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
             });
+
+            const bufferStream = new Readable();
+            bufferStream.push(file.buffer);
+            bufferStream.push(null);
+            bufferStream.pipe(uploadStream);
         });
 
-        const bufferStream = new Readable();
-        bufferStream.push(file.buffer);
-        bufferStream.push(null);
-        bufferStream.pipe(uploadStream);
+        res.json({
+            success: true,
+            url: result.secure_url,
+            public_id: result.public_id,
+            duration: result.duration
+        });
 
     } catch (error) {
         console.error('❌ Upload error:', error);
@@ -264,7 +265,54 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
 });
 
 // ============================================================
-// API - RUAJ MEDIA (FOTO/VIDEO)
+// API - UPLOAD PHOTO
+// ============================================================
+app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Nuk u gjet asnjë foto' });
+        }
+
+        console.log('📥 Photo received:', req.file.originalname);
+
+        const file = req.file;
+        const eventId = req.body.eventId || 'unknown';
+
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({
+                resource_type: 'image',
+                folder: `festo_photos/${eventId}`,
+                public_id: `${Date.now()}_${file.originalname.replace(/\.[^/.]+$/, '')}`,
+                transformation: [
+                    { width: 1200, height: 1200, crop: 'limit' },
+                    { quality: 'auto:good' },
+                    { format: 'jpg' }
+                ]
+            }, (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            });
+
+            const bufferStream = new Readable();
+            bufferStream.push(file.buffer);
+            bufferStream.push(null);
+            bufferStream.pipe(uploadStream);
+        });
+
+        res.json({
+            success: true,
+            url: result.secure_url,
+            public_id: result.public_id
+        });
+
+    } catch (error) {
+        console.error('❌ Upload error:', error);
+        res.status(500).json({ error: 'Gabim në ngarkimin e fotos: ' + error.message });
+    }
+});
+
+// ============================================================
+// API - RUAJ MEDIA
 // ============================================================
 app.post('/api/events/:eventId/media', async (req, res) => {
     try {
@@ -275,12 +323,6 @@ app.post('/api/events/:eventId/media', async (req, res) => {
 
         if (!name || !type || !fileUrl) {
             return res.status(400).json({ error: 'Të dhënat janë të paplota' });
-        }
-
-        // Kontrollo nëse eventi ekziston
-        const eventCheck = await pool.query('SELECT id FROM events WHERE id = $1', [eventId]);
-        if (eventCheck.rows.length === 0) {
-            return res.status(404).json({ error: 'Eventi nuk u gjet' });
         }
 
         const result = await pool.query(
@@ -326,17 +368,17 @@ app.post('/api/events/:eventId/memory', async (req, res) => {
         const { eventId } = req.params;
         const { name, text, table } = req.body;
 
+        console.log('📥 Saving memory:', { eventId, name, text });
+
         if (!name || !text) {
             return res.status(400).json({ error: 'Të dhënat janë të paplota' });
         }
 
-        const memoryId = uuidv4();
-
         const result = await pool.query(
-            `INSERT INTO memories (id, event_id, name, text, table_number)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO memories (event_id, name, text, table_number)
+             VALUES ($1, $2, $3, $4)
              RETURNING id`,
-            [memoryId, eventId, name, text, table || 1]
+            [eventId, name, text, table || 1]
         );
 
         res.status(201).json({
@@ -354,7 +396,7 @@ app.post('/api/events/:eventId/memory', async (req, res) => {
 });
 
 // ============================================================
-// API - MERK KUJTIMET (MEMORIES)
+// API - MERK KUJTIMET
 // ============================================================
 app.get('/api/events/:eventId/memories', async (req, res) => {
     try {
@@ -404,14 +446,7 @@ app.get('/api/admin/events', async (req, res) => {
 app.delete('/api/admin/events/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params;
-        
-        // Fshi mediat e lidhura me eventin
-        await pool.query('DELETE FROM media WHERE event_id = $1', [eventId]);
-        // Fshi kujtimet e lidhura me eventin
-        await pool.query('DELETE FROM memories WHERE event_id = $1', [eventId]);
-        // Fshi eventin
         await pool.query('DELETE FROM events WHERE id = $1', [eventId]);
-        
         res.json({ message: 'Eventi u fshi me sukses' });
     } catch (error) {
         console.error('❌ Error deleting event:', error);
