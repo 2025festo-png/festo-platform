@@ -1017,12 +1017,12 @@
                     <label>📤 Zgjidh skedarin</label>
                     <div class="upload-zone" id="uploadZone">
                         📷 +
-                        <div class="text">Shto foto ose video (max 50MB)</div>
+                        <div class="text">Shto foto ose video (max 100MB)</div>
                     </div>
                     <input type="file" id="shareFile" accept="image/*,video/*,.mp4,.webm,.ogg,.mov,.avi,.mkv,.flv,.wmv,.3gp" style="display:none;">
                     <small style="color:#999; font-size:0.7rem;">
                         📹 Video: MP4, WEBM, OGG, MOV, AVI, MKV, FLV, WMV, 3GP 
-                        <strong>(max 50MB)</strong>
+                        <strong>(max 100MB)</strong>
                     </small>
                     <div class="upload-progress" id="uploadProgress">
                         <div class="progress-bar">
@@ -1097,7 +1097,12 @@
         // ============================================================
         // KONFIGURIMI
         // ============================================================
-        const eventId = window.location.pathname.split('/').pop();
+        let eventId = window.location.pathname.split('/').pop();
+        if (!eventId.includes('-')) {
+            eventId = parseInt(eventId);
+        }
+        console.log('📋 Event ID:', eventId);
+
         const ALL_TABLES = Array.from({ length: 20 }, (_, i) => i + 1);
 
         let currentEvent = null;
@@ -1125,6 +1130,8 @@
                     return;
                 }
 
+                console.log(`📋 Ngarkohet eventi me ID: ${eventId}`);
+
                 const response = await fetch(`/api/events/${eventId}`);
 
                 if (!response.ok) {
@@ -1141,7 +1148,7 @@
                 document.getElementById('firstNameDisplay').textContent = event.firstName || 'X';
                 document.getElementById('secondNameDisplay').textContent = event.secondName || 'Y';
 
-                loadMemories();
+                loadMedia();
                 showSection('find');
 
             } catch (error) {
@@ -1169,7 +1176,7 @@
             } else if (section === 'share') {
                 document.getElementById('shareSection').classList.add('open');
                 currentSection = 'share';
-                loadMedia(); // Ngarko mediat kur hapet
+                loadMedia();
             }
 
             updateFooterMenu(section);
@@ -1220,6 +1227,8 @@
             errorEl.classList.remove('show');
 
             try {
+                console.log(`🔍 Kërkohet emri: "${name}" në eventin: ${eventId}`);
+
                 const response = await fetch(`/api/events/${eventId}/guest/${encodeURIComponent(name)}`);
                 const data = await response.json();
 
@@ -1251,7 +1260,8 @@
                     resultDiv.classList.remove('show');
                 }
             } catch (error) {
-                errorEl.textContent = '❌ Gabim në lidhje me serverin.';
+                console.error('❌ Gabim në kërkim:', error);
+                errorEl.textContent = '❌ Gabim në lidhje me serverin: ' + error.message;
                 errorEl.classList.add('show');
                 resultDiv.classList.remove('show');
             }
@@ -1354,15 +1364,6 @@
         // ============================================================
         // KUJTIMET DHE MEDIAT
         // ============================================================
-        async function loadMemories() {
-            try {
-                // Ngarko mediat dhe kujtimet së bashku
-                await loadMedia();
-            } catch (error) {
-                console.error('Gabim:', error);
-            }
-        }
-
         async function loadMedia() {
             try {
                 const [mediaResponse, memoriesResponse] = await Promise.all([
@@ -1497,12 +1498,7 @@
                 return;
             }
 
-            // Validimi i madhësisë së videos (50MB)
-            if (type === 'video' && file.size > 50 * 1024 * 1024) {
-                alert('⚠️ Video është më e madhe se 50MB. Ju lutem zgjidhni një video më të vogël.');
-                return;
-            }
-
+            // ===== URIMET =====
             if (type === 'message') {
                 try {
                     const response = await fetch(`/api/events/${eventId}/memory`, {
@@ -1523,67 +1519,68 @@
                 } catch (error) {
                     alert('❌ Gabim në lidhje me serverin: ' + error.message);
                 }
-            } else {
-                try {
-                    document.getElementById('uploadProgress').style.display = 'block';
-                    document.getElementById('progressBar').style.width = '0%';
-                    document.getElementById('progressText').textContent = '🔄 Duke ngarkuar...';
+                return;
+            }
 
-                    const formData = new FormData();
-                    formData.append('video', file);
-                    formData.append('eventId', eventId);
+            // ===== FOTO DHE VIDEO =====
+            try {
+                document.getElementById('uploadProgress').style.display = 'block';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressText').textContent = '🔄 Duke ngarkuar...';
 
-                    const response = await fetch('/api/upload-video', {
-                        method: 'POST',
-                        body: formData
-                    });
+                const formData = new FormData();
+                const endpoint = type === 'video' ? '/api/upload-video' : '/api/upload-photo';
+                formData.append(type === 'video' ? 'video' : 'photo', file);
+                formData.append('eventId', eventId);
 
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Gabim në ngarkim');
-                    }
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    const result = await response.json();
-
-                    // Ruaj të dhënat në Supabase
-                    const saveResponse = await fetch(`/api/events/${eventId}/media`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            name: name,
-                            type: type,
-                            message: message || '',
-                            fileUrl: result.url,
-                            thumbnailUrl: result.thumbnail || null,
-                            cloudinaryId: result.public_id || null,
-                            tableNumber: 1
-                        })
-                    });
-
-                    if (!saveResponse.ok) {
-                        throw new Error('Gabim në ruajtjen e të dhënave');
-                    }
-
-                    document.getElementById('progressBar').style.width = '100%';
-                    document.getElementById('progressText').textContent = '✅ Ngarkimi u përfundua!';
-
-                    setTimeout(() => {
-                        document.getElementById('uploadProgress').style.display = 'none';
-                        document.getElementById('progressBar').style.width = '0%';
-                    }, 1500);
-
-                    alert('✅ Përmbajtja u shpërnda me sukses! 🎉');
-                    document.getElementById('shareName').value = '';
-                    document.getElementById('shareFile').value = '';
-
-                    // Ringarko galerinë
-                    loadMedia();
-
-                } catch (error) {
-                    console.error('❌ Gabim:', error);
-                    alert('❌ Gabim: ' + error.message);
-                    document.getElementById('uploadProgress').style.display = 'none';
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Gabim në ngarkim');
                 }
+
+                const result = await response.json();
+
+                // Ruaj të dhënat në databazë
+                const saveResponse = await fetch(`/api/events/${eventId}/media`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        type: type,
+                        message: message || '',
+                        fileUrl: result.url,
+                        thumbnailUrl: result.thumbnail || result.url || null,
+                        cloudinaryId: result.public_id || null,
+                        tableNumber: 1
+                    })
+                });
+
+                if (!saveResponse.ok) {
+                    throw new Error('Gabim në ruajtjen e të dhënave');
+                }
+
+                document.getElementById('progressBar').style.width = '100%';
+                document.getElementById('progressText').textContent = '✅ Ngarkimi u përfundua!';
+
+                setTimeout(() => {
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    document.getElementById('progressBar').style.width = '0%';
+                }, 1500);
+
+                alert('✅ Përmbajtja u shpërnda me sukses! 🎉');
+                document.getElementById('shareName').value = '';
+                document.getElementById('shareFile').value = '';
+                loadMedia();
+
+            } catch (error) {
+                console.error('❌ Gabim:', error);
+                alert('❌ Gabim: ' + error.message);
+                document.getElementById('uploadProgress').style.display = 'none';
             }
         });
 
@@ -1595,18 +1592,8 @@
             if (this.files.length > 0) {
                 const zone = document.getElementById('uploadZone');
                 const file = this.files[0];
-
-                // Kontrollo madhësinë për video
-                const type = document.getElementById('shareType').value;
-                if (type === 'video' && file.size > 50 * 1024 * 1024) {
-                    alert('⚠️ Video është më e madhe se 50MB. Ju lutem zgjidhni një video më të vogël.');
-                    this.value = '';
-                    zone.innerHTML = '📷 +<div class="text">Shto foto ose video (max 50MB)</div>';
-                    return;
-                }
-
                 const fileSize = (file.size / (1024 * 1024)).toFixed(1);
-                zone.innerHTML = `✅ ${file.name} (${fileSize}MB)<div class="text">Kliko për të ndryshuar</div>`;
+                zone.innerHTML = `✅ ${file.name} (${fileSize}MB)<div class="text">Kliko për të ndryshuar</div>';
             }
         });
 
