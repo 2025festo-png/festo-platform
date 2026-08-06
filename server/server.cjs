@@ -39,9 +39,9 @@ const upload = multer({
 });
 
 // ============================================================
-// RRUGËT PËR FAQET - RRUGË E SAKTË
+// RRUGËT PËR FAQET - PËRSHATUR PËR RENDER / PRODUCTION
 // ============================================================
-const publicPath = path.join(__dirname, '../public');
+const publicPath = path.join(process.cwd(), 'public');
 console.log('📂 Public path:', publicPath);
 
 app.use(cors());
@@ -61,7 +61,7 @@ function parseGuests(guests) {
 }
 
 // ============================================================
-// LIDHJA ME NEON
+// LIDHJA ME NEON DATABASE
 // ============================================================
 console.log('🔍 Checking DATABASE_URL...');
 
@@ -473,7 +473,7 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
 });
 
 // ============================================================
-// RRUGËT PËR FAQET - ME PUBLIC PATH TË QARTË
+// RRUGËT PËR FAQET (FRONTEND ROUTING)
 // ============================================================
 app.get('/event/:eventId', (req, res) => {
     res.sendFile(path.join(publicPath, 'event.html'));
@@ -484,29 +484,19 @@ app.get('/', (req, res) => {
 });
 
 // ============================================================
-// TEST PËR TË PARË SE KU JANË SKEDARËT
+// TEST PËR SIGHTING DIKUMENTESH
 // ============================================================
 app.get('/test-files', (req, res) => {
-    const results = {
+    res.json({
         publicPath: publicPath,
         indexExists: fs.existsSync(path.join(publicPath, 'index.html')),
-        eventExists: fs.existsSync(path.join(publicPath, 'event.html')),
-        files: {}
-    };
-    
-    const paths = [
-        path.join(__dirname, '../public/index.html'),
-        path.join(__dirname, 'public/index.html'),
-        path.join(__dirname, '../../public/index.html'),
-        path.join(process.cwd(), 'public/index.html'),
-        path.join(process.cwd(), '../public/index.html')
-    ];
-    
-    paths.forEach(p => {
-        results.files[p] = fs.existsSync(p);
+        eventExists: fs.existsSync(path.join(publicPath, 'event.html'))
     });
-    
-    res.json(results);
+});
+
+// Handle 404 for undefined routes
+app.use((req, res) => {
+    res.status(404).send('Faqja nuk u gjet');
 });
 
 // ============================================================
