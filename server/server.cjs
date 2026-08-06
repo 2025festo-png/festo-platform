@@ -356,6 +356,12 @@ app.use((req, res) => {
     res.status(404).send('Faqja nuk u gjet');
 });
 
+// ============================================================
+// NIS SERVERIN
+// ============================================================
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
-});+
+    console.log(`📂 Public path: ${publicPath}`);
+});
+
+// NUK KA ASGJË TJETËR PAS KËSAJ!
