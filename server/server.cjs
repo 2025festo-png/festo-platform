@@ -16,10 +16,10 @@ function parseGuests(guests) {
 // ============================================================
 // LIDHJA ME NEON
 // ============================================================
-@@ -67,18 +79,6 @@ pool.connect((err) => {
-}
+pool.connect((err) => {
 });
 
+}
 // ============================================================
 // FUNKSIONI NDIHMËS PËR GUESTS
 // ============================================================
@@ -35,7 +35,7 @@ function parseGuests(guests) {
 // ============================================================
 // API - KRIJO EVENT
 // ============================================================
-@@ -128,7 +128,7 @@ app.post('/api/events', async (req, res) => {
+app.post('/api/events', async (req, res) => {
 });
 
 } catch (error) {
@@ -44,7 +44,7 @@ function parseGuests(guests) {
 res.status(500).json({ error: error.message });
 }
 });
-@@ -165,7 +165,7 @@ app.get('/api/events/:eventId', async (req, res) => {
+app.get('/api/events/:eventId', async (req, res) => {
 });
 
 } catch (error) {
@@ -53,7 +53,7 @@ res.status(500).json({ error: error.message });
 res.status(500).json({ error: error.message });
 }
 });
-@@ -208,41 +208,7 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
+app.get('/api/events/:eventId/guest/:name', async (req, res) => {
 });
 
 } catch (error) {
@@ -96,7 +96,7 @@ app.get('/api/events/:eventId/memories', async (req, res) => {
 res.status(500).json({ error: error.message });
 }
 });
-@@ -275,7 +241,7 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
+app.post('/api/upload-video', upload.single('video'), async (req, res) => {
 }, (error, result) => {
 if (error) {
 console.error('❌ Cloudinary error:', error);
@@ -105,7 +105,7 @@ console.error('❌ Cloudinary error:', error);
 }
 
 res.json({
-@@ -293,12 +259,12 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
+app.post('/api/upload-video', upload.single('video'), async (req, res) => {
 
 } catch (error) {
 console.error('❌ Upload error:', error);
@@ -120,7 +120,7 @@ console.error('❌ Upload error:', error);
 // ============================================================
 app.post('/api/events/:eventId/media', async (req, res) => {
 try {
-@@ -311,13 +277,17 @@ app.post('/api/events/:eventId/media', async (req, res) => {
+app.post('/api/events/:eventId/media', async (req, res) => {
 return res.status(400).json({ error: 'Të dhënat janë të paplota' });
 }
 
@@ -142,7 +142,7 @@ const result = await pool.query(
 );
 
 res.status(201).json({
-@@ -331,6 +301,23 @@ app.post('/api/events/:eventId/media', async (req, res) => {
+app.post('/api/events/:eventId/media', async (req, res) => {
 }
 });
 
@@ -166,7 +166,7 @@ app.get('/api/events/:eventId/media', async (req, res) => {
 // ============================================================
 // API - LEJ KUJTIM (URIM)
 // ============================================================
-@@ -366,6 +353,23 @@ app.post('/api/events/:eventId/memory', async (req, res) => {
+app.post('/api/events/:eventId/memory', async (req, res) => {
 }
 });
 
@@ -190,7 +190,7 @@ app.get('/api/events/:eventId/memories', async (req, res) => {
 // ============================================================
 // API - ADMIN - MERK TË GJITHA EVENTET
 // ============================================================
-@@ -389,7 +393,7 @@ app.get('/api/admin/events', async (req, res) => {
+app.get('/api/admin/events', async (req, res) => {
 res.json(events);
 
 } catch (error) {
@@ -199,7 +199,7 @@ res.json(events);
 res.status(500).json({ error: error.message });
 }
 });
-@@ -400,10 +404,17 @@ app.get('/api/admin/events', async (req, res) => {
+app.get('/api/admin/events', async (req, res) => {
 app.delete('/api/admin/events/:eventId', async (req, res) => {
 try {
 const { eventId } = req.params;
