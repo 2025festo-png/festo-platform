@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FestO - Gjej Vendin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #FDF8F0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { max-width: 500px; width: 100%; background: #fff; border-radius: 28px; padding: 30px 25px; box-shadow: 0 20px 60px rgba(212,168,76,0.15); border: 1px solid rgba(212,168,76,0.1); }
+        .logo { text-align: center; font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #1A1A1A; }
+        .logo span { color: #D4A84C; font-style: italic; }
+        .tagline { text-align: center; font-size: 0.8rem; color: #888; letter-spacing: 2px; margin-top: 4px; }
+        .stars { text-align: center; font-size: 1.2rem; color: #D4A84C; letter-spacing: 8px; margin-top: 6px; }
+        .names { text-align: center; font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #D4A84C; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(212,168,76,0.1); }
+        .names .ampersand { font-size: 2rem; font-style: italic; }
+        .suffix { text-align: right; font-size: 1rem; color: #D4A84C; opacity: 0.8; margin-top: -4px; padding-right: 4px; }
+        .main-title { text-align: center; font-family: 'Playfair Display', serif; font-size: 1.2rem; margin: 20px 0 4px; }
+        .main-sub { text-align: center; font-size: 0.8rem; color: #888; margin-bottom: 20px; }
+        .form-group { position: relative; margin-bottom: 16px; }
+        .form-group input { width: 100%; padding: 14px 16px; border: 2px solid #E8E0EC; border-radius: 12px; font-size: 1rem; font-family: 'Inter', sans-serif; background: #fff; transition: 0.3s; }
+        .form-group input:focus { outline: none; border-color: #D4A84C; box-shadow: 0 0 0 4px rgba(212,168,76,0.12); }
+        .form-group .floating-label { position: absolute; left: 16px; top: 12px; font-size: 0.85rem; color: #888; pointer-events: none; transition: 0.2s; font-family: 'Inter', sans-serif; }
+        .form-group input:focus ~ .floating-label, .form-group input:not(:placeholder-shown) ~ .floating-label { top: 4px; font-size: 0.7rem; color: #D4A84C; }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #D4A84C, #B8943E); color: #fff; border: none; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,168,76,0.35); }
+        .btn-primary:active { transform: translateY(0); }
+        .error { color: #dc3545; font-size: 0.85rem; margin-top: 6px; display: none; text-align: center; }
+        .error.show { display: block; }
+        .result { margin-top: 20px; padding: 20px; background: #FDF8F0; border-radius: 16px; border: 2px solid #D4A84C; display: none; }
+        .result.show { display: block; }
+        .table-number { font-size: 3rem; font-weight: 800; text-align: center; font-family: 'Playfair Display', serif; }
+        .table-label { text-align: center; color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        .guest-item { padding: 10px 14px; background: #fff; border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .guest-item.current { border: 2px solid #D4A84C; background: #FDF8F0; }
+        .guest-item .badge { background: #FDF8F0; padding: 2px 12px; border-radius: 20px; font-size: 0.7rem; }
+        .guest-item.current .badge { background: #D4A84C; color: #fff; }
+        .footer-menu { display: flex; gap: 10px; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(212,168,76,0.1); }
+        .footer-btn { flex: 1; padding: 10px 6px; background: #FDF8F0; border: 2px solid transparent; border-radius: 12px; font-size: 0.7rem; font-weight: 600; color: #888; cursor: pointer; text-align: center; font-family: 'Inter', sans-serif; transition: 0.3s; }
+        .footer-btn:hover { background: rgba(212,168,76,0.1); border-color: #D4A84C; }
+        .footer-btn.active { background: linear-gradient(135deg, #D4A84C, #B8943E); color: #fff; border-color: #D4A84C; box-shadow: 0 4px 15px rgba(212,168,76,0.2); }
+        .back-link { display: block; text-align: center; margin-top: 14px; color: #D4A84C; font-weight: 600; font-size: 0.75rem; cursor: pointer; }
+        .back-link:hover { text-decoration: underline; }
+        .hidden { display: none !important; }
+        @media (max-width:480px){ .container { padding: 20px 16px; } .names { font-size: 1.5rem; } .logo { font-size: 1.7rem; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">Fest<span>O</span></div>
+    <div class="tagline">✦ Find Your Place. Share Your Joy. ✦</div>
+    <div class="stars">✦ ✦ ✦ ✦ ✦</div>
+    <div class="names"><span id="firstNameDisplay">X</span><span class="ampersand">&amp;</span><span id="secondNameDisplay">Y</span></div>
+    <div class="suffix">Event's</div>
 
+    <div id="findSection">
+        <div class="main-title">Shkruaj emrin për të gjetur tavolinën tënde</div>
+        <div class="main-sub">Gjej vendin tënd në sekonda</div>
+        <div class="form-group">
+            <input type="text" id="guestName" placeholder=" ">
+            <label class="floating-label">Emër Mbiemër</label>
+            <div class="error" id="errorMessage">❌ Emri nuk u gjet</div>
+        </div>
+        <button class="btn-primary" id="searchBtn">Gjej Tavolinën</button>
+        <div class="result" id="result">
+            <div class="table-label">✦ Tavolina juaj ✦</div>
+            <div class="table-number" id="tableNumber">-</div>
+            <div id="guestList"></div>
+        </div>
+    </div>
+
+    <div class="footer-menu">
+        <button class="footer-btn" id="footerMap">🗺️ Harta</button>
+        <button class="footer-btn" id="footerShare">📸 Ndaje Gëzimin</button>
+    </div>
+    <div class="back-link" onclick="goHome()">← Kthehu te FestO</div>
+</div>
+
+<script>
+console.log('🔍 event.html loaded!');
+const eventId = window.location.pathname.split('/').pop();
+console.log('📋 Event ID:', eventId);
+
+let currentEvent = null;
+
+async function loadEvent() {
+    try {
+        if (!eventId || eventId === 'event') {
+            document.getElementById('firstNameDisplay').textContent = '?';
+            document.getElementById('secondNameDisplay').textContent = '?';
+            return;
+        }
+        const response = await fetch('/api/events/' + eventId);
+        if (!response.ok) throw new Error('Gabim në ngarkim');
+        const event = await response.json();
+        console.log('📋 Event loaded:', event);
+        currentEvent = event;
+        document.getElementById('firstNameDisplay').textContent = event.firstName || 'X';
+        document.getElementById('secondNameDisplay').textContent = event.secondName || 'Y';
+    } catch (error) {
+        console.error('❌ Gabim:', error);
+        document.getElementById('firstNameDisplay').textContent = '!';
+        document.getElementById('secondNameDisplay').textContent = '!';
+    }
+}
+
+async function searchGuest() {
+    const name = document.getElementById('guestName').value.trim();
+    const errorEl = document.getElementById('errorMessage');
+    const resultDiv = document.getElementById('result');
+    if (!name) {
+        errorEl.textContent = '📝 Shkruani emrin.';
+        errorEl.classList.add('show');
+        resultDiv.classList.remove('show');
+        return;
+    }
+    errorEl.classList.remove('show');
+    try {
+        const response = await fetch('/api/events/' + eventId + '/guest/' + encodeURIComponent(name));
+        const data = await response.json();
+        if (response.ok) {
+            document.getElementById('tableNumber').textContent = data.tableNumber;
+            const guestList = document.getElementById('guestList');
+            guestList.innerHTML = data.tableGuests.map(g => {
+                const isCurrent = g.name.toLowerCase() === name.toLowerCase();
+                return '<div class="guest-item' + (isCurrent ? ' current' : '') + '"><span>' + g.name + '</span><span class="badge">' + (isCurrent ? '👈 Ju' : 'Tavolinë ' + g.table) + '</span></div>';
+            }).join('');
+            resultDiv.classList.add('show');
+        } else {
+            errorEl.textContent = data.error || '❌ Emri nuk u gjet.';
+            errorEl.classList.add('show');
+            resultDiv.classList.remove('show');
+        }
+    } catch (error) {
+        errorEl.textContent = '❌ Gabim në lidhje me serverin.';
+        errorEl.classList.add('show');
+        resultDiv.classList.remove('show');
+    }
+}
+
+function goHome() {
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('guestName').value = '';
+    document.getElementById('errorMessage').classList.remove('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', loadEvent);
+document.getElementById('searchBtn').addEventListener('click', searchGuest);
+document.getElementById('guestName').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') searchGuest();
+});
+document.getElementById('guestName').addEventListener('input', function() {
+    document.getElementById('errorMessage').classList.remove('show');
+});
+</script>
+</body>
+</html>
