@@ -355,7 +355,47 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
     res.status(404).send('Faqja nuk u gjet');
 });
+// ============================================================
+// ADMIN - MERK TË GJITHA EVENTET
+// ============================================================
+app.get('/api/admin/events', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
+        );
 
+        const events = result.rows.map(e => ({
+            id: e.id,
+            eventName: e.event_name,
+            firstName: e.first_name,
+            secondName: e.second_name,
+            date: e.date,
+            venue: e.venue,
+            guests: parseGuests(e.guests),
+            createdAt: e.created_at
+        }));
+
+        res.json(events);
+
+    } catch (error) {
+        console.error('❌ Error fetching admin events:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
+// ADMIN - FSHIJ EVENT
+// ============================================================
+app.delete('/api/admin/events/:eventId', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        await pool.query('DELETE FROM events WHERE id = $1', [eventId]);
+        res.json({ message: 'Eventi u fshi me sukses' });
+    } catch (error) {
+        console.error('❌ Error deleting event:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 // ============================================================
 // NIS SERVERIN
 // ============================================================
