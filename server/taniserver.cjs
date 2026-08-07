@@ -135,7 +135,35 @@ app.post('/api/events', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+// ============================================================
+// MERR TË GJITHA EVENTET (PËR ADMIN PANEL)
+// ============================================================
+app.get('/api/events', async (req, res) => {
+    try {
+        console.log('📊 Fetching all events for admin panel');
+        const result = await pool.query(
+            'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
+        );
 
+        const events = result.rows.map(e => ({
+            id: e.id,
+            eventName: e.event_name,
+            firstName: e.first_name,
+            secondName: e.second_name,
+            date: e.date,
+            venue: e.venue,
+            guests: parseGuests(e.guests),
+            createdAt: e.created_at
+        }));
+
+        console.log('📊 Events found:', events.length);
+        res.json(events);
+
+    } catch (error) {
+        console.error('❌ Error fetching events:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
 // MERR EVENTIN
 app.get('/api/events/:eventId', async (req, res) => {
     try {
