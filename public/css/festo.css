@@ -1,1 +1,108 @@
+/* ===== NDAJE GËZIMIN ===== */
+.share-section .share-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--festo-black);
+    margin-bottom: 4px;
+    text-align: center;
+}
+.share-section .share-title .highlight {
+    color: var(--festo-gold);
+}
 
+.share-section .share-sub {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--festo-gray);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.share-section .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--festo-dark);
+    font-size: 0.85rem;
+}
+
+.share-section .form-group input,
+.share-section .form-group textarea,
+.share-section .form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #E8E0EC;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--festo-white);
+    color: var(--festo-dark);
+    transition: all 0.3s ease;
+}
+
+/* ===== BUTONI ===== */
+.btn-primary {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--festo-gradient);
+    color: var(--festo-white);
+    border: none;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* ===== GALERIA ===== */
+.share-section .gallery-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--festo-black);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.memory-empty {
+    color: var(--festo-gray);
+    text-align: center;
+    padding: 30px 16px;
+    font-size: 0.9rem;
+    background: var(--festo-gold-bg);
+    border-radius: 12px;
+    border: 2px dashed rgba(212, 168, 76, 0.2);
+}
+
+/* ===== FOOTER ===== */
+.footer-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 12px;
+    background: var(--festo-white);
+    color: var(--festo-dark);
+    border: 2px solid #E8E0EC;
+    border-radius: 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 14px;
+    color: var(--festo-gold);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
