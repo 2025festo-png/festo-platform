@@ -403,10 +403,13 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
 app.get('/api/events/:eventId/media', async (req, res) => {
     try {
         const { eventId } = req.params;
+        console.log('📸 Fetching media for event:', eventId);
+        
         const result = await pool.query(
             'SELECT * FROM media WHERE event_id = $1 ORDER BY created_at DESC',
             [eventId]
         );
+        console.log('📸 Media found:', result.rows.length);
         res.json(result.rows);
     } catch (error) {
         console.error('❌ Error fetching media:', error);
@@ -420,23 +423,61 @@ app.get('/api/events/:eventId/media', async (req, res) => {
 app.get('/api/events/:eventId/memories', async (req, res) => {
     try {
         const { eventId } = req.params;
+        console.log('💬 Fetching memories for event:', eventId);
+        
         const result = await pool.query(
             'SELECT * FROM memories WHERE event_id = $1 ORDER BY timestamp DESC',
             [eventId]
         );
+        console.log('💬 Memories found:', result.rows.length);
         res.json(result.rows);
     } catch (error) {
         console.error('❌ Error fetching memories:', error);
         res.status(500).json({ error: error.message });
     }
 });
+
 // ============================================================
-// NIS SERVERIN
+// ADMIN - MERK TË GJITHA EVENTET
 // ============================================================
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
-    console.log(`📂 Public path: ${publicPath}`);
+app.get('/api/admin/events', async (req, res) => {
+    try {
+        console.log('📊 Fetching all events for admin');
+        const result = await pool.query(
+            'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
+        );
+
+        const events = result.rows.map(e => ({
+            id: e.id,
+            eventName: e.event_name,
+            firstName: e.first_name,
+            secondName: e.second_name,
+            date: e.date,
+            venue: e.venue,
+            guests: parseGuests(e.guests),
+            createdAt: e.created_at
+        }));
+
+        console.log('📊 Admin events found:', events.length);
+        res.json(events);
+
+    } catch (error) {
+        console.error('❌ Error fetching admin events:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
-// NUK KA ASGJË TJETËR PAS KËSAJ!
-
+// ============================================================
+// ADMIN - FSHIJ EVENT
+// ============================================================
+app.delete('/api/admin/events/:eventId', async (req, res) => {
+    try {
+        const { eventId } = req.params;
+        console.log('🗑️ Deleting event:', eventId);
+        await pool.query('DELETE FROM events WHERE id = $1', [eventId]);
+        res.json({ message: 'Eventi u fshi me sukses' });
+    } catch (error) {
+        console.error('❌ Error deleting event:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
