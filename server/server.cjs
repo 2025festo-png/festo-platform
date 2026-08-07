@@ -481,3 +481,12 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+// ============================================================
+// NIS SERVERIN
+// ============================================================
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
+    console.log(`📂 Public path: ${publicPath}`);
+});
+
+// NUK KA ASGJË TJETËR PAS KËSAJ!
