@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FestO - Detajet e Eventit</title>
+  
+  <style>
+    :root {
+      --primary-gold: #c69238;
+      --primary-gold-hover: #b0802c;
+      --border-dashed: #e4c27a;
+      --bg-dashed: #fdfbf7;
+      --text-dark: #333333;
+      --text-muted: #777777;
+      --border-light: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 16px;
+      color: var(--text-dark);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Karta e Ngarkimit */
+    .share-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #111;
+      margin: 0 0 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      margin: 0 0 20px 0;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      outline: none;
+      background: #fff;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary-gold);
+    }
+
+    /* Custom Dropzone Style (Kutia e Verdhë si në foto) */
+    .file-dropzone {
+      border: 2px dashed var(--border-dashed);
+      background-color: var(--bg-dashed);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .file-dropzone:hover {
+      background-color: #fcf6ea;
+      border-color: var(--primary-gold);
+    }
+
+    .dropzone-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .dropzone-success {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .file-info-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #4a4a4a;
+    }
+
+    .check-icon {
+      font-size: 1.3rem;
+    }
+
+    .file-size {
+      color: #888888;
+      font-weight: 400;
+    }
+
+    .change-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .file-limits {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      margin-bottom: 0;
+      font-weight: 600;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      background-color: var(--primary-gold);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--primary-gold-hover);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.99);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- FORMA E RE E NGARKIMIT TE PERMBAJTJES -->
+    <div class="share-card">
+      <h2 class="card-title">
+        <span>📤</span> Ndaje Gëzimin!
+      </h2>
+      <p class="card-subtitle">Ndaj momentet e tua më të bukura me të gjithë të ftuarit!</p>
+
+      <form id="shareForm">
+        <!-- Emri juaj -->
+        <div class="form-group">
+          <label for="authorName"><span>👤</span> Emri juaj</label>
+          <input type="text" id="authorName" placeholder="Vendosni emrin tuaj..." required />
+        </div>
+
+        <!-- Lloji i përmbajtjes -->
+        <div class="form-group">
+          <label for="shareType"><span>📋</span> Lloji i përmbajtjes</label>
+          <select id="shareType">
+            <option value="photo">📸 Foto</option>
+            <option value="video">🎥 Video</option>
+            <option value="message">💬 Urim / Mesazh</option>
+          </select>
+        </div>
+
+        <!-- Zgjidh skedarin (Dropzone) -->
+        <div class="form-group" id="fileGroup">
+          <label><span>📥</span> Zgjidh skedarin</label>
+          <div class="file-dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept="image/*" hidden />
+            
+            <div class="dropzone-empty" id="dropzoneEmpty">
+              <span>📁 Klikoni ose tërhiqni skedarin këtu</span>
+            </div>
+
+            <div class="dropzone-success hidden" id="dropzoneSuccess">
+              <div class="file-info-row">
+                <span class="check-icon">✅</span>
+                <span id="fileName" class="file-name">dog.webp</span>
+                <span id="fileSize" class="file-size">(0.0MB)</span>
+              </div>
+              <span class="change-hint">Klikoni për të ndryshuar</span>
+            </div>
+          </div>
+          <p class="file-limits" id="fileLimits">
+            Formatet: JPG, PNG, WEBP, HEIC (max 20MB)
+          </p>
+        </div>
+
+        <!-- Fusha e Urimit/Mesazhit (shfaqet për mesazhe ose mund të lihet edhe për foto) -->
+        <div class="form-group hidden" id="messageGroup">
+          <label for="shareMessage"><span>✍️</span> Urimi juaj</label>
+          <textarea id="shareMessage" rows="3" placeholder="Shkruani një urim..."></textarea>
+        </div>
+
+        <!-- Butoni Dërgo -->
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>📤</span> SHPËRNDA GËZIMIN!
+        </button>
+      </form>
+    </div>
+
+    <!-- SEKSIONI I MAP-S DHE MEDIAVE TË SHPËRNDARA -->
+    <div id="eventMapSection"></div>
+    <div id="mediaFeed"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const shareType = document.getElementById('shareType');
+      const fileGroup = document.getElementById('fileGroup');
+      const messageGroup = document.getElementById('messageGroup');
+      const fileInput = document.getElementById('fileInput');
+      const dropzone = document.getElementById('dropzone');
+      const dropzoneEmpty = document.getElementById('dropzoneEmpty');
+      const dropzoneSuccess = document.getElementById('dropzoneSuccess');
+      const fileName = document.getElementById('fileName');
+      const fileSize = document.getElementById('fileSize');
+      const fileLimits = document.getElementById('fileLimits');
+      const shareForm = document.getElementById('shareForm');
+
+      const limitsConfig = {
+        photo: "Formatet: JPG, PNG, WEBP, HEIC (max 20MB)",
+        video: "Formatet: MP4, WEBM, OGG, MOV, AVI, MKV, FLV, WMV, 3GP (max 200MB, deri në 1 minutë)"
+      };
+
+      // 1. Ndryshimi dinamik sipas Llojit të Përmbajtjes
+      shareType.addEventListener('change', (e) => {
+        const val = e.target.value;
+
+        if (val === 'message') {
+          fileGroup.classList.add('hidden');
+          messageGroup.classList.remove('hidden');
+        } else {
+          fileGroup.classList.remove('hidden');
+          messageGroup.classList.add('hidden');
+          
+          if (val === 'photo') {
+            fileInput.setAttribute('accept', 'image/*');
+            fileLimits.textContent = limitsConfig.photo;
+          } else if (val === 'video') {
+            fileInput.setAttribute('accept', 'video/*');
+            fileLimits.textContent = limitsConfig.video;
+          }
+        }
+      });
+
+      // 2. Eventet e Dropzone
+      dropzone.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleSelectedFile(file);
+      });
+
+      function handleSelectedFile(file) {
+        const sizeInMB = (file.size / (1024 * 1024)).toFixed(1);
+        fileName.textContent = file.name;
+        fileSize.textContent = `(${sizeInMB}MB)`;
+
+        dropzoneEmpty.classList.add('hidden');
+        dropzoneSuccess.classList.remove('hidden');
+      }
+
+      // 3. Drag & Drop
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = '#c69238';
+          dropzone.style.backgroundColor = '#fcf6ea';
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropzone.style.borderColor = '';
+          dropzone.style.backgroundColor = '';
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          handleSelectedFile(files[0]);
+        }
+      });
+
+      // 4. Logjika e Dërgimit (Submit)
+      shareForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const author = document.getElementById('authorName').value;
+        const type = shareType.value;
+        const message = document.getElementById('shareMessage').value;
+        const file = fileInput.files[0];
+
+        if (type !== 'message' && !file) {
+          alert('💬 Ju lutem zgjidhni një skedar.');
+          return;
+        }
+
+        if (type === 'message' && !message) {
+          alert('💬 Ju lutem shkruani një urim.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('author', author);
+        formData.append('type', type);
+        formData.append('message', message || '');
+        if (file) {
+          formData.append('file', file);
+        }
+
+        try {
+          // Lidhja me backend-in tuaj
+          const eventId = new URLSearchParams(window.location.search).get('id') || 'default';
+          const response = await fetch(`/api/events/${eventId}/media`, {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            alert('🎉 U shpërnda me sukses!');
+            shareForm.reset();
+            dropzoneSuccess.classList.add('hidden');
+            dropzoneEmpty.classList.remove('hidden');
+          } else {
+            alert('Ndodhi një gabim gjatë dërgimit.');
+          }
+        } catch (err) {
+          console.error('Gabim te dërgimi:', err);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
