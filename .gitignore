@@ -1,0 +1,13 @@
+# SIGURI - MOS I NGARKO!
+.env
+.env.local
+.env.*.local
+
+# DOSJET E MËDHA
+node_modules/
+package-lock.json
+
+# SKEDARËT E SISTEMIT
+.DS_Store
+Thumbs.db
+*.log
