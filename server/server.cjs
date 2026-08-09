@@ -380,9 +380,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(publicPath, 'index.html'));
 });
 
-app.use((req, res) => {
-    res.status(404).send('Faqja nuk u gjet');
-});
 // ============================================================
 // ADMIN - MERK TË GJITHA EVENTET
 // ============================================================
@@ -508,6 +505,12 @@ app.delete('/api/admin/events/:eventId', async (req, res) => {
         console.error('❌ Error deleting event:', error);
         res.status(500).json({ error: error.message });
     }
+});
+// ============================================================
+// KAPËSJA 404 - DUHET TË JETË E FUNDIT!
+// ============================================================
+app.use((req, res) => {
+    res.status(404).send('Faqja nuk u gjet');
 });
 // ============================================================
 // NIS SERVERIN
