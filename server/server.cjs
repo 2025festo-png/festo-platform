@@ -10,7 +10,7 @@ const { Readable } = require('stream');
 const path = require('path');
 
 // 🔐 Moduli i hyrjes (kredencialet verifikohen VETËM në server)
-const { attachAuth, requireAuth } = require('./festo-auth');
+const { attachAuth, requireAuth } = require('./festo-auth.cjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
