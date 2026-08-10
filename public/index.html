@@ -1116,20 +1116,23 @@
         // ============================================================
         // INICIALIZIMI
         // ============================================================
-        async function checkSession() {
-            try {
-                const res = await fetch('/api/session', { credentials: 'same-origin' });
-                if (res.ok) {
-                    showDashboard();
-                    loadAdminEvents();
-                    return true;
-                }
-            } catch (e) {
-                console.error('Gabim në kontrollin e sesionit:', e);
+     async function checkSession() {
+    try {
+        const res = await fetch('/api/session', { credentials: 'same-origin' });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.authenticated) {
+                showDashboard();
+                loadAdminEvents();
+                return true;
             }
-            showLogin();
-            return false;
         }
+    } catch (e) {
+        console.error('Gabim në kontrollin e sesionit:', e);
+    }
+    showLogin();
+    return false;
+}
 
         function showLogin() {
             document.getElementById('loginOverlay').classList.remove('festo-hidden');
