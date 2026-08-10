@@ -274,9 +274,10 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
         });
 
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+ } catch (error) {
+    console.error('❌ UPLOAD ERROR:', error.message);
+    res.status(500).json({ error: error.message });
+}
 });
 
 // ============================================================
@@ -310,9 +311,10 @@ app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
         });
 
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+   } catch (error) {
+    console.error('❌ UPLOAD ERROR:', error.message);
+    res.status(500).json({ error: error.message });
+}
 });
 
 // ============================================================
