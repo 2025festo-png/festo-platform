@@ -16,27 +16,47 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ============================================================
-// 🛡️ SIGURIA E HEADER-EVE (helmet)
+// 🛡️ HELMET v8 — CSP e zgjeruar për Google Fonts + jsPDF CDN
 // ============================================================
 app.use(helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "'unsafe-eval'",
+                "https://cdnjs.cloudflare.com",
+                "https://unpkg.com",
+                "https://cdn.jsdelivr.net",
+                "https://js.cloudflare.com"
+            ],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com",
+                "https://cdnjs.cloudflare.com",
+                "https://unpkg.com",
+                "https://cdn.jsdelivr.net"
+            ],
             imgSrc: ["'self'", "data:", "https:", "blob:"],
             mediaSrc: ["'self'", "https:", "blob:"],
             connectSrc: ["'self'", "https:"],
-            fontSrc: ["'self'", "https:", "data:"],
-            frameSrc: ["'self'"],
-        },
-    },
+            fontSrc: [
+                "'self'",
+                "https:",
+                "data:",
+                "https://fonts.gstatic.com"
+            ],
+            frameSrc: ["'self'"]
+        }
+    }
 }));
 
 // ============================================================
 // KONFIGURIMI CLOUDINARY
-// ⚠️ Zhvendosi këto në Environment Variables në Render:
-//    CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 // ============================================================
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -61,14 +81,14 @@ const upload = multer({
 });
 
 // ============================================================
-// 🛡️ RATE LIMITING PËR UPLOAD (max 5 upload per 10 minuta per IP)
+// 🛡️ RATE LIMITING PËR UPLOAD
 // ============================================================
 const uploadLimiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 minuta
+    windowMs: 10 * 60 * 1000,
     max: 5,
     message: { error: 'Shumë kërkesa, provo përsëri më vonë.' },
     standardHeaders: true,
-    legacyHeaders: false,
+    legacyHeaders: false
 });
 
 // ============================================================
@@ -76,23 +96,18 @@ const uploadLimiter = rateLimit({
 // ============================================================
 const publicPath = path.join(process.cwd(), 'public');
 
-// 🛡️ CORS: Lejo vetëm domain-in tënd (NDRYSHO me domain-in real kur të kesh)
 app.use(cors({
     origin: [
-        'https://localhost:3000',
-        // Shto këtu URL-në e Render pas deploy: 'https://festo-app.onrender.com'
+        'https://localhost:3000'
     ],
     credentials: true
 }));
 
 app.use(express.json({ limit: '100mb' }));
-
-// ⚠️ index.html shërbehet nga një rrugë e dedikuar më poshtë (pa cache),
-// që ekrani i hyrjes të mos ruhet i vjetëruar në browser.
 app.use(express.static(publicPath, { index: false }));
 
 // ============================================================
-// 🔐 RRUGËT E HYRJES: /api/login, /api/logout, /api/session
+// 🔐 RRUGËT E HYRJES
 // ============================================================
 attachAuth(app);
 
@@ -120,7 +135,6 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
     connectionTimeoutMillis: 10000,
-    // 🔥 MOS E MBYLL LIDHJEN KËRKUQ — ruan gjallëri për Neon
     keepAlive: true,
     idleTimeoutMillis: 0
 });
@@ -133,10 +147,8 @@ pool.connect((err) => {
     }
 });
 
-// MOS LEJO CRASH kur Neon mbyll një lidhje papritur
 pool.on('error', (err) => {
     console.error('PostgreSQL pool error:', err.message);
-    // Nuk e mbyllim procesin — pool e rindërt vetë
 });
 
 pool.on('connect', () => {
@@ -151,7 +163,7 @@ app.get('/api/test', (req, res) => {
 });
 
 // ============================================================
-// KRIJO EVENT  🔐 (vetëm admini i futur)
+// KRIJO EVENT 🔐
 // ============================================================
 app.post('/api/events', requireAuth, async (req, res) => {
     try {
@@ -198,11 +210,10 @@ app.post('/api/events', requireAuth, async (req, res) => {
 });
 
 // ============================================================
-// MERR TË GJITHA EVENTET (PËR ADMIN PANEL)  🔐
+// MERR TË GJITHA EVENTET 🔐
 // ============================================================
 app.get('/api/events', requireAuth, async (req, res) => {
     try {
-        console.log('📊 Fetching all events for admin panel');
         const result = await pool.query(
             'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
         );
@@ -218,7 +229,6 @@ app.get('/api/events', requireAuth, async (req, res) => {
             createdAt: e.created_at
         }));
 
-        console.log('📊 Events found:', events.length);
         res.json(events);
     } catch (error) {
         console.error('❌ Error fetching events:', error);
@@ -227,7 +237,7 @@ app.get('/api/events', requireAuth, async (req, res) => {
 });
 
 // ============================================================
-// MERR EVENTIN (publik — të ftuarit e hapin me QR)
+// MERR EVENTIN (publik)
 // ============================================================
 app.get('/api/events/:eventId', async (req, res) => {
     try {
@@ -239,8 +249,6 @@ app.get('/api/events/:eventId', async (req, res) => {
         }
 
         const event = result.rows[0];
-        const guests = parseGuests(event.guests);
-
         res.json({
             id: event.id,
             eventName: event.event_name,
@@ -248,7 +256,7 @@ app.get('/api/events/:eventId', async (req, res) => {
             secondName: event.second_name,
             date: event.date,
             venue: event.venue,
-            guests: guests,
+            guests: parseGuests(event.guests),
             qrCode: event.qr_code,
             layout: event.layout,
             createdAt: event.created_at
@@ -274,11 +282,6 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         }
 
         const guests = parseGuests(result.rows[0].guests);
-
-        if (guests.length === 0) {
-            return res.status(404).json({ error: 'Nuk ka të ftuar në këtë event' });
-        }
-
         const guest = guests.find(g => g.name && g.name.trim().toLowerCase() === decodedName);
 
         if (!guest) {
@@ -286,7 +289,6 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
         }
 
         const tableGuests = guests.filter(g => g.table === guest.table);
-
         res.json({ guest: guest, tableGuests: tableGuests, tableNumber: guest.table });
     } catch (error) {
         console.error('❌ Error searching guest:', error);
@@ -301,22 +303,16 @@ app.post('/api/upload-video', uploadLimiter, upload.single('video'), async (req,
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë video' });
 
-        console.log('🎥 Video upload nisi:', req.file.originalname, 'size:', req.file.size, 'mimetype:', req.file.mimetype);
-
         const base64 = req.file.buffer.toString('base64');
         const dataUri = `data:${req.file.mimetype};base64,${base64}`;
 
         const result = await cloudinary.uploader.upload(dataUri, {
             resource_type: 'video'
-            // ASNJË folder, ASNJË transformation
         });
 
-        console.log('✅ Video uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
     } catch (error) {
-        console.error('❌ UPLOAD ERROR FULL:', error);
-        console.error('❌ Message:', error.message);
-        console.error('❌ HTTP Code:', error.http_code);
+        console.error('❌ UPLOAD ERROR:', error);
         res.status(500).json({ error: error.message, http_code: error.http_code || null });
     }
 });
@@ -328,25 +324,16 @@ app.post('/api/upload-photo', uploadLimiter, upload.single('photo'), async (req,
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë foto' });
 
-        console.log('📸 Photo upload nisi:', req.file.originalname, 'size:', req.file.size, 'mimetype:', req.file.mimetype);
-
-        // Konverto buffer në base64
         const base64 = req.file.buffer.toString('base64');
         const dataUri = `data:${req.file.mimetype};base64,${base64}`;
 
-        console.log('📸 Uploading to Cloudinary...');
-
         const result = await cloudinary.uploader.upload(dataUri, {
             resource_type: 'image'
-            // ASNJË folder, ASNJË transformation
         });
 
-        console.log('✅ Photo uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
     } catch (error) {
-        console.error('❌ UPLOAD ERROR FULL:', error);
-        console.error('❌ Message:', error.message);
-        console.error('❌ HTTP Code:', error.http_code);
+        console.error('❌ UPLOAD ERROR:', error);
         res.status(500).json({ error: error.message, http_code: error.http_code || null });
     }
 });
@@ -378,14 +365,10 @@ app.post('/api/events/:eventId/media', async (req, res) => {
 app.get('/api/events/:eventId/media', async (req, res) => {
     try {
         const { eventId } = req.params;
-        console.log('📸 Fetching media for event:', eventId);
-
         const result = await pool.query(
             'SELECT * FROM media WHERE event_id = $1 ORDER BY created_at DESC',
             [eventId]
         );
-
-        console.log('📸 Media found:', result.rows.length);
         res.json(result.rows);
     } catch (error) {
         console.error('❌ Error fetching media:', error);
@@ -425,14 +408,10 @@ app.post('/api/events/:eventId/memory', async (req, res) => {
 app.get('/api/events/:eventId/memories', async (req, res) => {
     try {
         const { eventId } = req.params;
-        console.log('💬 Fetching memories for event:', eventId);
-
         const result = await pool.query(
             'SELECT * FROM memories WHERE event_id = $1 ORDER BY timestamp DESC',
             [eventId]
         );
-
-        console.log('💬 Memories found:', result.rows.length);
         res.json(result.rows);
     } catch (error) {
         console.error('❌ Error fetching memories:', error);
@@ -441,14 +420,12 @@ app.get('/api/events/:eventId/memories', async (req, res) => {
 });
 
 // ============================================================
-// ADMIN 🔐 — të gjitha rrugët nën /api/admin kërkojnë hyrje
+// ADMIN 🔐
 // ============================================================
 app.use('/api/admin', requireAuth);
 
-// ADMIN - MERR TË GJITHA EVENTET
 app.get('/api/admin/events', async (req, res) => {
     try {
-        console.log('📊 Fetching all events for admin');
         const result = await pool.query(
             'SELECT id, event_name, first_name, second_name, date, venue, guests, created_at FROM events ORDER BY created_at DESC'
         );
@@ -464,7 +441,6 @@ app.get('/api/admin/events', async (req, res) => {
             createdAt: e.created_at
         }));
 
-        console.log('📊 Admin events found:', events.length);
         res.json(events);
     } catch (error) {
         console.error('❌ Error fetching admin events:', error);
@@ -472,11 +448,9 @@ app.get('/api/admin/events', async (req, res) => {
     }
 });
 
-// ADMIN - FSHIJ EVENT
 app.delete('/api/admin/events/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params;
-        console.log('🗑️ Deleting event:', eventId);
         await pool.query('DELETE FROM events WHERE id = $1', [eventId]);
         res.json({ message: 'Eventi u fshi me sukses' });
     } catch (error) {
@@ -498,7 +472,7 @@ app.get('/', (req, res) => {
 });
 
 // ============================================================
-// TEST CLOUDINARY - DIAGNOSTIKUES (pa ekspozuar sekretin)
+// TEST CLOUDINARY
 // ============================================================
 app.get('/api/test-cloudinary', async (req, res) => {
     try {
@@ -514,8 +488,6 @@ app.get('/api/test-cloudinary', async (req, res) => {
         res.status(500).json({
             ok: false,
             error_message: err.message,
-            error_name: err.name,
-            http_code: err.http_code,
             cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
             api_key: process.env.CLOUDINARY_API_KEY
         });
@@ -523,7 +495,7 @@ app.get('/api/test-cloudinary', async (req, res) => {
 });
 
 // ============================================================
-// KAPËSJA 404 - DUHET TË JETË E FUNDIT!
+// 404
 // ============================================================
 app.use((req, res) => {
     res.status(404).send('Faqja nuk u gjet');
@@ -536,6 +508,3 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Serveri FestO u nis në portën ${PORT}`);
     console.log(`📂 Public path: ${publicPath}`);
 });
-
-// NUK KA ASGJË TJETËR PAS KËSAJ!
-
