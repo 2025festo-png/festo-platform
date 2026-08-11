@@ -258,15 +258,11 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
         const result = await new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
                 resource_type: 'video',
-                folder: `festo_videos/${eventId}`,
-                transformation: [
-                    { width: 854, height: 480, crop: 'limit' },
-                    { quality: 'auto:low' }
-                ]
+                folder: `festo_videos/${eventId}`
             }, (error, result) => {
                 if (error) reject(error);
                 else resolve(result);
-            });
+            })
 
             const bufferStream = new Readable();
             bufferStream.push(file.buffer);
@@ -302,11 +298,7 @@ app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
         const result = await new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream({
                 resource_type: 'image',
-                folder: `festo_photos/${eventId}`,
-                transformation: [
-                    { width: 1200, height: 1200, crop: 'limit' },
-                    { quality: 'auto:good' }
-                ]
+                folder: `festo_photos/${eventId}`
             }, (error, result) => {
                 if (error) reject(error);
                 else resolve(result);
