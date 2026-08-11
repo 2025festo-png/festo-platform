@@ -91,6 +91,10 @@ pool.connect((err) => {
         console.log('✅ Database connected successfully to Neon');
     }
 });
+// MOS LEJO CRASH kur Neon mbyll një lidhje papritur
+pool.on('error', (err) => {
+    console.error('PostgreSQL pool error:', err.message);
+});
 
 // ============================================================
 // API PUBLIKE
