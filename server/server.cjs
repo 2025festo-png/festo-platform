@@ -250,30 +250,20 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë video' });
 
-        console.log('🎥 Video upload nisi:', req.file.originalname, 'size:', req.file.size);
+        console.log('🎥 Video upload nisi:', req.file.originalname, 'size:', req.file.size, 'mimetype:', req.file.mimetype);
 
-        const file = req.file;
-        const eventId = req.body.eventId || 'unknown';
+        const base64 = req.file.buffer.toString('base64');
+        const dataUri = `data:${req.file.mimetype};base64,${base64}`;
 
-        const result = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream({
-                resource_type: 'video',
-                folder: `festo_videos/${eventId}`
-            }, (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            })
-
-            const bufferStream = new Readable();
-            bufferStream.push(file.buffer);
-            bufferStream.push(null);
-            bufferStream.pipe(uploadStream);
+        const result = await cloudinary.uploader.upload(dataUri, {
+            resource_type: 'video'
+            // ASNJË folder, ASNJË transformation
         });
 
         console.log('✅ Video uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
     } catch (error) {
-        console.error('❌ UPLOAD ERROR FULL:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        console.error('❌ UPLOAD ERROR FULL:', error);
         console.error('❌ Message:', error.message);
         console.error('❌ HTTP Code:', error.http_code);
         res.status(500).json({ error: error.message, http_code: error.http_code || null });
@@ -287,40 +277,28 @@ app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë foto' });
 
-        console.log('📸 Photo upload nisi:', req.file.originalname, 'size:', req.file.size);
-        console.log('🔑 Cloud name:', process.env.CLOUDINARY_CLOUD_NAME);
-        console.log('🔑 API Key defined:', !!process.env.CLOUDINARY_API_KEY);
-        console.log('🔑 API Secret defined:', !!process.env.CLOUDINARY_API_SECRET);
+        console.log('📸 Photo upload nisi:', req.file.originalname, 'size:', req.file.size, 'mimetype:', req.file.mimetype);
 
-        const file = req.file;
-        const eventId = req.body.eventId || 'unknown';
+        // Konverto buffer në base64
+        const base64 = req.file.buffer.toString('base64');
+        const dataUri = `data:${req.file.mimetype};base64,${base64}`;
 
-        const result = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream({
-                resource_type: 'image',
-                folder: `festo_photos/${eventId}`
-            }, (error, result) => {
-                if (error) reject(error);
-                else resolve(result);
-            });
+        console.log('📸 Uploading to Cloudinary...');
 
-            const bufferStream = new Readable();
-            bufferStream.push(file.buffer);
-            bufferStream.push(null);
-            bufferStream.pipe(uploadStream);
+        const result = await cloudinary.uploader.upload(dataUri, {
+            resource_type: 'image'
+            // ASNJË folder, ASNJË transformation
         });
 
         console.log('✅ Photo uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
     } catch (error) {
-        console.error('❌ UPLOAD ERROR FULL:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        console.error('❌ UPLOAD ERROR FULL:', error);
         console.error('❌ Message:', error.message);
         console.error('❌ HTTP Code:', error.http_code);
-        console.error('❌ Name:', error.name);
         res.status(500).json({ error: error.message, http_code: error.http_code || null });
     }
 });
-
 
 // ============================================================
 // RUAJ MEDIA (publik)
