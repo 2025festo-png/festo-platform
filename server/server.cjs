@@ -482,7 +482,34 @@ app.get('/', (req, res) => {
 app.use((req, res) => {
     res.status(404).send('Faqja nuk u gjet');
 });
-
+// ============================================================
+// TEST CLOUDINARY - DIAGNOSTIKUES
+// ============================================================
+app.get('/api/test-cloudinary', async (req, res) => {
+    try {
+        const result = await cloudinary.api.ping();
+        res.json({ 
+            ok: true, 
+            ping: result,
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            secret_length: (process.env.CLOUDINARY_API_SECRET || '').length,
+            secret_first_3: (process.env.CLOUDINARY_API_SECRET || '').substring(0, 3),
+            secret_last_3: (process.env.CLOUDINARY_API_SECRET || '').slice(-3)
+        });
+    } catch (err) {
+        res.status(500).json({ 
+            ok: false, 
+            error_message: err.message,
+            error_name: err.name,
+            http_code: err.http_code,
+            full_error: JSON.stringify(err, Object.getOwnPropertyNames(err)),
+            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+            api_key: process.env.CLOUDINARY_API_KEY,
+            secret_length: (process.env.CLOUDINARY_API_SECRET || '').length
+        });
+    }
+});
 // ============================================================
 // NIS SERVERIN
 // ============================================================
