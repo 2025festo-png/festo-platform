@@ -15,12 +15,15 @@ const { attachAuth, requireAuth } = require('./festo.auth.cjs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy (required for Render + express-rate-limit)
+app.set('trust proxy', 1);
+
 // ============================================================
 // 🛡️ HELMET v8 — CSP e zgjeruar për Google Fonts + jsPDF CDN
 // ============================================================
 app.use(helmet({
     crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginResourcePolicy: false,
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
@@ -59,9 +62,9 @@ app.use(helmet({
 // KONFIGURIMI CLOUDINARY
 // ============================================================
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: (process.env.CLOUDINARY_CLOUD_NAME || '').trim(),
+    api_key: (process.env.CLOUDINARY_API_KEY || '').trim(),
+    api_secret: (process.env.CLOUDINARY_API_SECRET || '').trim()
 });
 
 // ============================================================
@@ -85,10 +88,11 @@ const upload = multer({
 // ============================================================
 const uploadLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 5,
+    max: 20,
     message: { error: 'Shumë kërkesa, provo përsëri më vonë.' },
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    validate: { xForwardedForHeader: false }
 });
 
 // ============================================================
@@ -97,9 +101,7 @@ const uploadLimiter = rateLimit({
 const publicPath = path.join(process.cwd(), 'public');
 
 app.use(cors({
-    origin: [
-        'https://localhost:3000'
-    ],
+    origin: true,
     credentials: true
 }));
 
