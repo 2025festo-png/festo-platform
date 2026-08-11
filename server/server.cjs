@@ -477,12 +477,6 @@ app.get('/', (req, res) => {
 });
 
 // ============================================================
-// KAPËSJA 404 - DUHET TË JETË E FUNDIT!
-// ============================================================
-app.use((req, res) => {
-    res.status(404).send('Faqja nuk u gjet');
-});
-// ============================================================
 // TEST CLOUDINARY - DIAGNOSTIKUES
 // ============================================================
 app.get('/api/test-cloudinary', async (req, res) => {
@@ -509,6 +503,12 @@ app.get('/api/test-cloudinary', async (req, res) => {
             secret_length: (process.env.CLOUDINARY_API_SECRET || '').length
         });
     }
+});
+// ============================================================
+// KAPËSJA 404 - DUHET TË JETË E FUNDIT!
+// ============================================================
+app.use((req, res) => {
+    res.status(404).send('Faqja nuk u gjet');
 });
 // ============================================================
 // NIS SERVERIN
