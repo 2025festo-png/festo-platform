@@ -18,7 +18,20 @@ const PORT = process.env.PORT || 3000;
 // ============================================================
 // 🛡️ SIGURIA E HEADER-EVE (helmet)
 // ============================================================
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:", "blob:"],
+            mediaSrc: ["'self'", "https:", "blob:"],
+            connectSrc: ["'self'", "https:"],
+            fontSrc: ["'self'", "https:", "data:"],
+            frameSrc: ["'self'"],
+        },
+    },
+}));
 
 // ============================================================
 // KONFIGURIMI CLOUDINARY
