@@ -244,11 +244,13 @@ app.get('/api/events/:eventId/guest/:name', async (req, res) => {
 });
 
 // ============================================================
-// UPLOAD VIDEO (publik — të ftuarit dërgojnë kujtime)
+// UPLOAD VIDEO (publik)
 // ============================================================
 app.post('/api/upload-video', upload.single('video'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë video' });
+
+        console.log('🎥 Video upload nisi:', req.file.originalname, 'size:', req.file.size);
 
         const file = req.file;
         const eventId = req.body.eventId || 'unknown';
@@ -259,8 +261,7 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
                 folder: `festo_videos/${eventId}`,
                 transformation: [
                     { width: 854, height: 480, crop: 'limit' },
-                    { quality: 'auto:low' },
-                    { format: 'mp4' }
+                    { quality: 'auto:low' }
                 ]
             }, (error, result) => {
                 if (error) reject(error);
@@ -273,11 +274,14 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
             bufferStream.pipe(uploadStream);
         });
 
+        console.log('✅ Video uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
- } catch (error) {
-    console.error('❌ UPLOAD ERROR:', error.message);
-    res.status(500).json({ error: error.message });
-}
+    } catch (error) {
+        console.error('❌ UPLOAD ERROR FULL:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        console.error('❌ Message:', error.message);
+        console.error('❌ HTTP Code:', error.http_code);
+        res.status(500).json({ error: error.message, http_code: error.http_code || null });
+    }
 });
 
 // ============================================================
@@ -286,6 +290,11 @@ app.post('/api/upload-video', upload.single('video'), async (req, res) => {
 app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'Nuk u gjet asnjë foto' });
+
+        console.log('📸 Photo upload nisi:', req.file.originalname, 'size:', req.file.size);
+        console.log('🔑 Cloud name:', process.env.CLOUDINARY_CLOUD_NAME);
+        console.log('🔑 API Key defined:', !!process.env.CLOUDINARY_API_KEY);
+        console.log('🔑 API Secret defined:', !!process.env.CLOUDINARY_API_SECRET);
 
         const file = req.file;
         const eventId = req.body.eventId || 'unknown';
@@ -296,8 +305,7 @@ app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
                 folder: `festo_photos/${eventId}`,
                 transformation: [
                     { width: 1200, height: 1200, crop: 'limit' },
-                    { quality: 'auto:good' },
-                    { format: 'jpg' }
+                    { quality: 'auto:good' }
                 ]
             }, (error, result) => {
                 if (error) reject(error);
@@ -310,12 +318,17 @@ app.post('/api/upload-photo', upload.single('photo'), async (req, res) => {
             bufferStream.pipe(uploadStream);
         });
 
+        console.log('✅ Photo uploaded:', result.secure_url);
         res.json({ success: true, url: result.secure_url, public_id: result.public_id });
-   } catch (error) {
-    console.error('❌ UPLOAD ERROR:', error.message);
-    res.status(500).json({ error: error.message });
-}
+    } catch (error) {
+        console.error('❌ UPLOAD ERROR FULL:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        console.error('❌ Message:', error.message);
+        console.error('❌ HTTP Code:', error.http_code);
+        console.error('❌ Name:', error.name);
+        res.status(500).json({ error: error.message, http_code: error.http_code || null });
+    }
 });
+
 
 // ============================================================
 // RUAJ MEDIA (publik)
