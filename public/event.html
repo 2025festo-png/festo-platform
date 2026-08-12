@@ -1,0 +1,189 @@
+AI
+appi im https://festo-app.onrender.com/event/ A mund te me ndihmosh qe x and y event's te kaloje ne krah te FESTO ✦ Find Your Place. Share Your Joy. ✦ ne nje format te kendshem te ndare me ndonje vije te holle apo dicka tjeter interesente qe mendon ti si ekspert
+
+Serveri është i zënë (503), kështu që nuk munda të marr detajet e eventeve. Do të ndërtoj layoutin tani — më thuaj emrat dhe detajet e dy eventeve (X dhe Y) dhe i shtoj menjëherë.
+
+Ndërkohë po ndërtoj me placeholder data të bukur:
+
+Gati! Ja çfarë kam ndërtuar:
+
+Layout-i: Dy karta eventesh shfaqen krah për krah, të ndara nga një ndarës vertikal elegant — dy segmente vije të hollë me gradient, dhe ndërmjet tyre një bllok qendror me "FESTO ✦" të shkruar vertikalisht, me efekt xham të tejdukshëm.
+
+Kartat e eventeve kanë:
+
+Fotografi me efekt zoom në hover
+Tag me ngjyrë unike për çdo event
+Numër vendesh të disponueshme
+Meta-të dhëna (data, ora, vendi, qyteti)
+Çmim + buton "Rezervo vendin"
+Animacion të butë ngritje në hover
+Stil: Warm editorial — sfond gradient krem/amber, tipografi Fraunces (serif) + Outfit (sans), ngjyra akçent individuale për secilin event.
+
+Nëse do të futësh eventet e vërteta nga festo-app, më jep:
+
+Emrin e dy eventeve
+Datën, vendin, çmimin, përshkrimin (opsional)
+dhe i zëvendësoj menjëherë!
+
+ky eshte event.html im. me bej ndryshimin qe kerkova nese mundesh
+
+Ndryshimi është bërë! Ja çfarë u ndryshua në festo-landing-page.html:
+
+Para: Logo + tagline → yjet → "X & Y Event's" të gjitha vertikalisht njëra poshtë tjetrës
+
+Pas: Dy kolona krah për krah:
+
+E majtë: FestO logo + ✦ Find Your Place. Share Your Joy. ✦ + yjet animues
+Ndarës: Vija e hollë vertikale me gradient gold + pikëz e rrumbullakët në mes
+E djathtë: X & Y Event's + etiketa e vogël "Organizatorët" poshtë
+Dizajni ndan me elegancë dy identitetet — brandi FESTO dhe emrat e organizatorëve — pa asnjë element të rëndë.
+
+Për ta përdorur: Zëvendëso festo-landing-page.html në projektin tënd me versionin e modifikuar nga src/imports/pasted_text/festo-landing-page.html.
+
+a mund ta kem ketu kodin update per ta kopjuar?
+
+Ja kodi i plotë i updateuar — kopjo gjithçka nga blloku më poshtë:
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FestO - Gjej Vendin. Ndaj Gëzimin.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --festo-gold: #D4A84C;
+            --festo-gold-light: #E8C97A;
+            --festo-gold-dark: #B8943E;
+            --festo-gold-bg: #FDF8F0;
+            --festo-white: #FFFFFF;
+            --festo-black: #1A1A1A;
+            --festo-dark: #2D2D2D;
+            --festo-gray: #888888;
+            --festo-light-gray: #F5F5F5;
+            --festo-shadow: 0 20px 60px rgba(212, 168, 76, 0.2);
+            --festo-gradient: linear-gradient(135deg, #D4A84C, #B8943E);
+            --festo-gradient-light: linear-gradient(135deg, #FDF8F0, #F5EDD6);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--festo-gradient-light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: var(--festo-white);
+            border-radius: 28px;
+            padding: 30px 25px 20px;
+            box-shadow: var(--festo-shadow);
+            border: 1px solid rgba(212, 168, 76, 0.15);
+            position: relative;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+        .icon-black { color: var(--festo-black); display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+        .icon-black svg { width: 20px; height: 20px; stroke: var(--festo-black); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .icon-black-lg svg { width: 24px; height: 24px; }
+        .icon-black-md svg { width: 22px; height: 22px; }
+        .festo-header { padding-bottom: 10px; border-bottom: 1px solid rgba(212, 168, 76, 0.1); margin-bottom: 20px; flex-shrink: 0; }
+        /* Split header: brand left | divider | organizer right */
+        .header-split { display: flex; align-items: center; justify-content: center; gap: 0; }
+        .header-brand { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 20px 4px 4px; }
+        .header-divider { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+        .header-divider .vline { width: 1px; height: 44px; background: linear-gradient(to bottom, transparent, rgba(212,168,76,0.5), transparent); }
+        .header-divider .vdot { width: 5px; height: 5px; border-radius: 50%; background: var(--festo-gold); opacity: 0.7; }
+        .header-organizer { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 4px 4px 20px; }
+        .festo-header .logo { font-family: 'Playfair Display', serif; font-size: 2.0rem; font-weight: 700; color: var(--festo-black); }
+        .festo-header .logo span { color: var(--festo-gold); font-style: italic; }
+        .festo-header .tagline { font-family: 'Playfair Display', serif; font-size: 0.72rem; color: var(--festo-gray); letter-spacing: 1.5px; margin-top: 2px; text-align: center; }
+        .festo-header .tagline .highlight { color: var(--festo-gold); font-weight: 700; }
+        .stars-divider { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; user-select: none; }
+        .stars-divider .star { color: var(--festo-gold); display: inline-block; opacity: 0.6; font-weight: 300; line-height: 1; animation: floatStar 2.5s ease-in-out infinite; }
+        .d1 { font-size: 0.65rem; animation-delay: 0s; }
+        .d2 { font-size: 0.9rem; animation-delay: 0.4s; }
+        .d3 { font-size: 1.1rem; animation-delay: 0.8s; }
+        .d4 { font-size: 0.85rem; animation-delay: 1.2s; }
+        .d5 { font-size: 0.55rem; animation-delay: 1.6s; }
+        @keyframes floatStar { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; } 50% { transform: translateY(-8px) scale(1.2); opacity: 0.9; } }
+        .organizer-wrapper { }
+        .organizer-names { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--festo-gold); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px; letter-spacing: 1px; }
+        .organizer { font-weight: 700; color: var(--festo-gold); }
+        .ampersand { font-family: 'Playfair Display', serif; font-size: 2.0rem; font-weight: 700; color: var(--festo-gold); font-style: italic; padding: 0 4px; line-height: 1; }
+        .event-suffix { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 400; color: var(--festo-gold); font-style: italic; margin-left: 4px; letter-spacing: 0.5px; }
+        .organizer-label { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--festo-gray); margin-top: 2px; opacity: 0.7; }
+        @media (max-width: 380px) {
+            .header-brand { padding-right: 12px; }
+            .header-organizer { padding-left: 12px; }
+            .organizer-names { font-size: 1.4rem; }
+            .ampersand { font-size: 1.6rem; }
+            .event-suffix { font-size: 1.4rem; }
+        }
+        .primary-section { flex: 1; display: flex; flex-direction: column; padding: 10px 0 5px 0; }
+        .primary-section.hidden { display: none; }
+        .main-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--festo-black); margin-bottom: 4px; text-align: center; }
+        .main-title .highlight-black { color: var(--festo-black); font-weight: 700; }
+        .main-sub { text-align: center; font-size: 0.8rem; color: var(--festo-gray); margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .form-group { position: relative; margin-bottom: 18px; }
+        .form-group input { width: 100%; padding: 20px 20px 8px 20px; border: 2px solid #E8E0EC; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; background: var(--festo-white); color: var(--festo-dark); text-align: left; padding-left: 24px; }
+        .form-group input:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12); }
+        .form-group input::placeholder { color: transparent; }
+        .form-group .floating-label { position: absolute; left: 24px; top: 12px; font-size: 0.85rem; font-weight: 500; color: var(--festo-gray); pointer-events: none; transition: all 0.2s ease; font-family: 'Inter', sans-serif; letter-spacing: 0.3px; }
+        .form-group input:focus ~ .floating-label, .form-group input:not(:placeholder-shown) ~ .floating-label { top: 4px; font-size: 0.7rem; color: var(--festo-gold); }
+        .btn-primary { width: 100%; padding: 14px; background: var(--festo-gradient); color: var(--festo-white); border: none; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-family: 'Inter', sans-serif; text-transform: uppercase; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 168, 76, 0.35); background: var(--festo-gold-dark); }
+        .btn-primary:active { transform: translateY(0); background: var(--festo-gradient); }
+        .btn-primary .icon-black svg { stroke: var(--festo-white); }
+        .error { color: #dc3545; font-size: 0.85rem; margin-top: 6px; display: none; text-align: center; }
+        .error.show { display: block; }
+        .result { margin-top: 20px; padding: 20px; background: var(--festo-gold-bg); border-radius: 16px; border: 2px solid var(--festo-gold); display: none; animation: fadeIn 0.5s ease; }
+        .result.show { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .table-number { font-size: 3rem; font-weight: 800; color: var(--festo-black); text-align: center; font-family: 'Playfair Display', serif; }
+        .table-label { text-align: center; color: var(--festo-gray); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
+        .guest-list-title { color: var(--festo-black); margin: 14px 0 10px; font-size: 0.9rem; padding-top: 14px; border-top: 2px solid rgba(212, 168, 76, 0.15); }
+        .guest-item { display: flex; align-items: center; padding: 10px 14px; background: var(--festo-white); border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; }
+        .guest-item .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--festo-gradient); color: var(--festo-white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; margin-right: 12px; flex-shrink: 0; }
+        .guest-item .name { font-weight: 500; color: var(--festo-dark); }
+        .guest-item .badge { margin-left: auto; background: var(--festo-gold-bg); padding: 3px 12px; border-radius: 20px; font-size: 0.65rem; color: var(--festo-gray); }
+        .guest-item.current { border: 2px solid var(--festo-gold); background: var(--festo-gold-bg); }
+        .guest-item.current .badge { background: var(--festo-gold); color: var(--festo-white); }
+        .map-section h4 { color: var(--festo-black); margin-bottom: 4px; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
+        .map-section .map-sub { color: var(--festo-gray); font-size: 0.8rem; margin-bottom: 6px; }
+        .map-legend { display: flex; justify-content: center; gap: 16px; margin: 8px 0 12px; font-size: 0.7rem; color: var(--festo-gray); }
+        .map-legend span { display: flex; align-items: center; gap: 4px; }
+        .map-legend .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+        .dot.occupied { background: var(--festo-gold); }
+        .dot.empty { background: #ddd; }
+        .dot.selected { background: var(--festo-gold); }
+        .map-container { display: grid; gap: 8px; padding: 14px; background: var(--festo-gold-bg); border-radius: 16px; border: 2px solid rgba(212, 168, 76, 0.15); min-height: 200px; }
+        .map-table-clickable { background: var(--festo-white); border-radius: 10px; padding: 12px 4px; text-align: center; border: 2px solid #e8e0ec; cursor: pointer; transition: all 0.3s ease; }
+        .map-table-clickable:hover { transform: scale(1.04); border-color: var(--festo-gold-light); }
+        .map-table-clickable.occupied { border-color: var(--festo-gold); background: var(--festo-gold-bg); }
+        .map-table-clickable.empty { opacity: 0.6; border-color: #ddd; }
+        .map-table-clickable.selected { border-color: var(--festo-gold); background: var(--festo-gold-bg); transform: scale(1.06); box-shadow: 0 0 0 3px rgba(212, 168, 76, 0.25); }
+        .map-table-clickable .num { font-size: 1.1rem; font-weight: 700; color: var(--festo-black); }
+        .map-table-clickable .count { font-size: 0.55rem; color: var(--festo-gray); margin-top: 2px; }
+        .map-table-clickable .label-small { font-size: 0.4rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
+        .map-empty { visibility: hidden; }
+        .table-info { margin-top: 12px; display: none; background: var(--festo-gold-bg); border-radius: 12px; padding: 12px; border-left: 4px solid var(--festo-gold); }
+        .table-info.show { display: block; animation: fadeIn 0.3s ease; }
+        .table-info h5 { color: var(--festo-black); font-size: 0.9rem; }
+        .table-info .guest-names { margin-top: 6px; font-size: 0.85rem; color: var(--festo-dark); }
+        .stage-area { background: var(--festo-gradient); color: var(--festo-white); padding: 8px; border-radius: 8px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 10px; }
+        #shareSection h4 { font-family: 'Playfair Display', serif; color: var(--festo-black); font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        #shareSection .share-sub { color: var(--festo-gray); font-size: 0.85rem; margin-bottom: 24px; line-height: 1.45; padding-bottom: 16px; border-bottom: 1px solid rgba(212, 168, 76, 0.12); }
+        #shareSection .form-group { position: relative; margin-bottom: 20px; }
+        #shareSection .field-label { display: block; font-weight: 600; margin-bottom: 7px; color: var(--festo-dark); font-size: 0.88rem; }
+        #shareSection .form-group input, #shareSection .form-group textarea, #shareSection .form-group select { width: 100%; padding: 12px 14px; border: 2px solid #E8E0EC; border-radius: 12px; font-size: 0.95rem; font-family: 'Inter', sans-serif; background: var(--festo-white); color: var(--festo-dark); transition: all 0.3s ease; }
+        #shareSection .form-group input:focus, #shareSection .form-group textarea:focus, #shareSection .form-group select:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12); }
+        #shareSection .
+
+
