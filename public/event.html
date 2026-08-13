@@ -2,271 +2,460 @@
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FestO - Gjej Vendin. Ndaj Gëzimin.</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestO - Aplikacioni i Plotë Funksional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --festo-gold: #D4A84C;
-            --festo-gold-light: #E8C97A;
-            --festo-gold-dark: #B8943E;
-            --festo-gold-bg: #FDF8F0;
-            --festo-white: #FFFFFF;
-            --festo-black: #1A1A1A;
-            --festo-dark: #2D2D2D;
-            --festo-gray: #888888;
-            --festo-light-gray: #F5F5F5;
-            --festo-shadow: 0 20px 60px rgba(212, 168, 76, 0.2);
-            --festo-gradient: linear-gradient(135deg, #D4A84C, #B8943E);
-            --festo-gradient-light: linear-gradient(135deg, #FDF8F0, #F5EDD6);
-        }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--festo-gradient-light);
+            background: #FDF8F0;
             min-height: 100vh;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
         .container {
-            max-width: 550px;
+            max-width: 480px;
             width: 100%;
-            background: var(--festo-white);
-            border-radius: 28px;
-            padding: 30px 25px 20px;
-            box-shadow: var(--festo-shadow);
-            border: 1px solid rgba(212, 168, 76, 0.15);
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 28px 24px;
+            box-shadow: 0 15px 40px rgba(212, 168, 76, 0.15);
+            border: 1px solid rgba(212, 168, 76, 0.2);
+        }
+
+        /* HEADER */
+        .festo-header {
+            padding-bottom: 18px;
+            border-bottom: 1px solid #F0E6D8;
+            margin-bottom: 26px;
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Gjendja Normale (Krah me krah, stil floriri, font Playfair Display) */
+        .left-brand {
+            flex: 0 0 42%;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #C59B27;
+            line-height: 1.2;
+        }
+        .left-brand .event-sub {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #C59B27;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* Gjendja Alternative për Emra të Gjatë (Të njëjtit font, në rreshta poshtë njëri-tjetrit) */
+        .left-brand.long-names {
+            font-size: 1rem;
+            line-height: 1.2;
+        }
+        .left-brand.long-names .name-part {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #C59B27;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .left-brand.long-names .ampersand {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: #C59B27;
+            font-size: 0.85rem;
+            margin: 1px 0;
+        }
+        .left-brand.long-names .event-sub {
+            display: block;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #C59B27;
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 48px;
+            background: #C59B27;
+            opacity: 0.35;
+            margin: 0 auto;
+        }
+        .right-brand {
+            flex: 0 0 calc(58% - 1px);
+            text-align: center;
+        }
+        .right-brand .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1A1A1A;
+            line-height: 1;
+        }
+        .right-brand .logo-text span {
+            color: #C59B27;
+        }
+        .right-brand .tagline {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.62rem;
+            color: #555555;
+            margin-top: 3px;
+            letter-spacing: 0.2px;
+            white-space: nowrap;
+        }
+        .right-brand .tagline span {
+            color: #C59B27;
+            font-weight: 600;
+        }
+        
+        /* Yjet me animacion */
+        .stars-divider {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            user-select: none;
+        }
+        .stars-divider .star {
+            color: #C59B27;
+            display: inline-block;
+            opacity: 0.6;
+            font-weight: 300;
+            line-height: 1;
+            animation: floatStar 2.5s ease-in-out infinite;
+        }
+        .d1 { font-size: 0.5rem; animation-delay: 0s; }
+        .d2 { font-size: 0.8rem; animation-delay: 0.4s; }
+        .d3 { font-size: 1.1rem; animation-delay: 0.8s; }
+        .d4 { font-size: 0.8rem; animation-delay: 1.2s; }
+        .d5 { font-size: 0.5rem; animation-delay: 1.6s; }
+
+        @keyframes floatStar {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+            50% { transform: translateY(-5px) scale(1.2); opacity: 0.9; }
+        }
+
+        /* PAMJET (VIEWS) */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* PJESA E KËRKIMIT */
+        .search-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 6px;
+        }
+        .main-sub {
+            font-size: 0.75rem;
+            color: #888888;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        .form-group {
             position: relative;
-            min-height: 700px;
+            margin-bottom: 16px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #EAE2D6;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+            background: #FFF;
+            color: #333;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #C59B27;
+            box-shadow: 0 0 0 4px rgba(197, 155, 39, 0.1);
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #C59B27;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        .btn-primary:hover {
+            background: #A67E1B;
+        }
+
+        /* REZULTATI I KËRKIMIT */
+        .result-box {
+            background: #FDF8F0;
+            border: 1px solid #EAE2D6;
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 16px;
+            text-align: left;
+            display: none;
+        }
+        .result-box h4 {
+            font-family: 'Playfair Display', serif;
+            color: #C59B27;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+        .result-box p {
+            font-size: 0.82rem;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        /* BUTONAT SEKUNDARE (Në fund) */
+        .secondary-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            border-top: 1px solid #F0E6D8;
+            padding-top: 20px;
+        }
+        .btn-secondary {
+            padding: 12px 10px;
+            background: #FFFFFF;
+            color: #C59B27;
+            border: 2px solid #EAE2D6;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s;
         }
-        .icon-black { color: var(--festo-black); display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
-        .icon-black svg { width: 20px; height: 20px; stroke: var(--festo-black); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-        .icon-black-lg svg { width: 24px; height: 24px; }
-        .icon-black-md svg { width: 22px; height: 22px; }
-        .festo-header { padding-bottom: 10px; border-bottom: 1px solid rgba(212, 168, 76, 0.1); margin-bottom: 20px; flex-shrink: 0; }
-        /* Split header: brand left | divider | organizer right */
-        .header-split { display: flex; align-items: center; justify-content: center; gap: 0; }
-        .header-brand { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 20px 4px 4px; }
-        .header-divider { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
-        .header-divider .vline { width: 1px; height: 44px; background: linear-gradient(to bottom, transparent, rgba(212,168,76,0.5), transparent); }
-        .header-divider .vdot { width: 5px; height: 5px; border-radius: 50%; background: var(--festo-gold); opacity: 0.7; }
-        .header-organizer { display: flex; flex-direction: column; align-items: center; flex: 1; padding: 4px 4px 4px 20px; }
-        .festo-header .logo { font-family: 'Playfair Display', serif; font-size: 2.0rem; font-weight: 700; color: var(--festo-black); }
-        .festo-header .logo span { color: var(--festo-gold); font-style: italic; }
-        .festo-header .tagline { font-family: 'Playfair Display', serif; font-size: 0.72rem; color: var(--festo-gray); letter-spacing: 1.5px; margin-top: 2px; text-align: center; }
-        .festo-header .tagline .highlight { color: var(--festo-gold); font-weight: 700; }
-        .stars-divider { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; user-select: none; }
-        .stars-divider .star { color: var(--festo-gold); display: inline-block; opacity: 0.6; font-weight: 300; line-height: 1; animation: floatStar 2.5s ease-in-out infinite; }
-        .d1 { font-size: 0.65rem; animation-delay: 0s; }
-        .d2 { font-size: 0.9rem; animation-delay: 0.4s; }
-        .d3 { font-size: 1.1rem; animation-delay: 0.8s; }
-        .d4 { font-size: 0.85rem; animation-delay: 1.2s; }
-        .d5 { font-size: 0.55rem; animation-delay: 1.6s; }
-        @keyframes floatStar { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; } 50% { transform: translateY(-8px) scale(1.2); opacity: 0.9; } }
-        .organizer-wrapper { }
-        .organizer-names { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--festo-gold); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2px; letter-spacing: 1px; }
-        .organizer { font-weight: 700; color: var(--festo-gold); }
-        .ampersand { font-family: 'Playfair Display', serif; font-size: 2.0rem; font-weight: 700; color: var(--festo-gold); font-style: italic; padding: 0 4px; line-height: 1; }
-        .event-suffix { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 400; color: var(--festo-gold); font-style: italic; margin-left: 4px; letter-spacing: 0.5px; }
-        .organizer-label { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--festo-gray); margin-top: 2px; opacity: 0.7; }
-        @media (max-width: 380px) {
-            .header-brand { padding-right: 12px; }
-            .header-organizer { padding-left: 12px; }
-            .organizer-names { font-size: 1.4rem; }
-            .ampersand { font-size: 1.6rem; }
-            .event-suffix { font-size: 1.4rem; }
+        .btn-secondary:hover {
+            border-color: #C59B27;
+            background: #FDF8F0;
         }
-        .primary-section { flex: 1; display: flex; flex-direction: column; padding: 10px 0 5px 0; }
-        .primary-section.hidden { display: none; }
-        .main-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600; color: var(--festo-black); margin-bottom: 4px; text-align: center; }
-        .main-title .highlight-black { color: var(--festo-black); font-weight: 700; }
-        .main-sub { text-align: center; font-size: 0.8rem; color: var(--festo-gray); margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .form-group { position: relative; margin-bottom: 18px; }
-        .form-group input { width: 100%; padding: 20px 20px 8px 20px; border: 2px solid #E8E0EC; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; background: var(--festo-white); color: var(--festo-dark); text-align: left; padding-left: 24px; }
-        .form-group input:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12); }
-        .form-group input::placeholder { color: transparent; }
-        .form-group .floating-label { position: absolute; left: 24px; top: 12px; font-size: 0.85rem; font-weight: 500; color: var(--festo-gray); pointer-events: none; transition: all 0.2s ease; font-family: 'Inter', sans-serif; letter-spacing: 0.3px; }
-        .form-group input:focus ~ .floating-label, .form-group input:not(:placeholder-shown) ~ .floating-label { top: 4px; font-size: 0.7rem; color: var(--festo-gold); }
-        .btn-primary { width: 100%; padding: 14px; background: var(--festo-gradient); color: var(--festo-white); border: none; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-family: 'Inter', sans-serif; text-transform: uppercase; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 168, 76, 0.35); background: var(--festo-gold-dark); }
-        .btn-primary:active { transform: translateY(0); background: var(--festo-gradient); }
-        .btn-primary .icon-black svg { stroke: var(--festo-white); }
-        .error { color: #dc3545; font-size: 0.85rem; margin-top: 6px; display: none; text-align: center; }
-        .error.show { display: block; }
-        .result { margin-top: 20px; padding: 20px; background: var(--festo-gold-bg); border-radius: 16px; border: 2px solid var(--festo-gold); display: none; animation: fadeIn 0.5s ease; }
-        .result.show { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .table-number { font-size: 3rem; font-weight: 800; color: var(--festo-black); text-align: center; font-family: 'Playfair Display', serif; }
-        .table-label { text-align: center; color: var(--festo-gray); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; }
-        .guest-list-title { color: var(--festo-black); margin: 14px 0 10px; font-size: 0.9rem; padding-top: 14px; border-top: 2px solid rgba(212, 168, 76, 0.15); }
-        .guest-item { display: flex; align-items: center; padding: 10px 14px; background: var(--festo-white); border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; }
-        .guest-item .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--festo-gradient); color: var(--festo-white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; margin-right: 12px; flex-shrink: 0; }
-        .guest-item .name { font-weight: 500; color: var(--festo-dark); }
-        .guest-item .badge { margin-left: auto; background: var(--festo-gold-bg); padding: 3px 12px; border-radius: 20px; font-size: 0.65rem; color: var(--festo-gray); }
-        .guest-item.current { border: 2px solid var(--festo-gold); background: var(--festo-gold-bg); }
-        .guest-item.current .badge { background: var(--festo-gold); color: var(--festo-white); }
-        .map-section h4 { color: var(--festo-black); margin-bottom: 4px; font-size: 1rem; display: flex; align-items: center; gap: 6px; }
-        .map-section .map-sub { color: var(--festo-gray); font-size: 0.8rem; margin-bottom: 6px; }
-        .map-legend { display: flex; justify-content: center; gap: 16px; margin: 8px 0 12px; font-size: 0.7rem; color: var(--festo-gray); }
-        .map-legend span { display: flex; align-items: center; gap: 4px; }
-        .map-legend .dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
-        .dot.occupied { background: var(--festo-gold); }
-        .dot.empty { background: #ddd; }
-        .dot.selected { background: var(--festo-gold); }
-        .map-container { display: grid; gap: 8px; padding: 14px; background: var(--festo-gold-bg); border-radius: 16px; border: 2px solid rgba(212, 168, 76, 0.15); min-height: 200px; }
-        .map-table-clickable { background: var(--festo-white); border-radius: 10px; padding: 12px 4px; text-align: center; border: 2px solid #e8e0ec; cursor: pointer; transition: all 0.3s ease; }
-        .map-table-clickable:hover { transform: scale(1.04); border-color: var(--festo-gold-light); }
-        .map-table-clickable.occupied { border-color: var(--festo-gold); background: var(--festo-gold-bg); }
-        .map-table-clickable.empty { opacity: 0.6; border-color: #ddd; }
-        .map-table-clickable.selected { border-color: var(--festo-gold); background: var(--festo-gold-bg); transform: scale(1.06); box-shadow: 0 0 0 3px rgba(212, 168, 76, 0.25); }
-        .map-table-clickable .num { font-size: 1.1rem; font-weight: 700; color: var(--festo-black); }
-        .map-table-clickable .count { font-size: 0.55rem; color: var(--festo-gray); margin-top: 2px; }
-        .map-table-clickable .label-small { font-size: 0.4rem; color: #999; text-transform: uppercase; letter-spacing: 1px; }
-        .map-empty { visibility: hidden; }
-        .table-info { margin-top: 12px; display: none; background: var(--festo-gold-bg); border-radius: 12px; padding: 12px; border-left: 4px solid var(--festo-gold); }
-        .table-info.show { display: block; animation: fadeIn 0.3s ease; }
-        .table-info h5 { color: var(--festo-black); font-size: 0.9rem; }
-        .table-info .guest-names { margin-top: 6px; font-size: 0.85rem; color: var(--festo-dark); }
-        .stage-area { background: var(--festo-gradient); color: var(--festo-white); padding: 8px; border-radius: 8px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 10px; }
-        #shareSection h4 { font-family: 'Playfair Display', serif; color: var(--festo-black); font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
-        #shareSection .share-sub { color: var(--festo-gray); font-size: 0.85rem; margin-bottom: 24px; line-height: 1.45; padding-bottom: 16px; border-bottom: 1px solid rgba(212, 168, 76, 0.12); }
-        #shareSection .form-group { position: relative; margin-bottom: 20px; }
-        #shareSection .field-label { display: block; font-weight: 600; margin-bottom: 7px; color: var(--festo-dark); font-size: 0.88rem; }
-        #shareSection .form-group input, #shareSection .form-group textarea, #shareSection .form-group select { width: 100%; padding: 12px 14px; border: 2px solid #E8E0EC; border-radius: 12px; font-size: 0.95rem; font-family: 'Inter', sans-serif; background: var(--festo-white); color: var(--festo-dark); transition: all 0.3s ease; }
-        #shareSection .form-group input:focus, #shareSection .form-group textarea:focus, #shareSection .form-group select:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212, 168, 76, 0.12); }
-        #shareSection .form-group textarea { resize: vertical; min-height: 80px; }
-        #shareSection select#shareType { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23D4A84C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 42px; cursor: pointer; }
-        #shareSection .upload-zone { border: 2px dashed var(--festo-gold); border-radius: 12px; padding: 16px 14px; text-align: center; background: var(--festo-gold-bg); cursor: pointer; transition: all 0.3s ease; }
-        #shareSection .upload-zone:hover { border-color: var(--festo-gold-dark); background: rgba(212, 168, 76, 0.1); }
-        #shareSection .upload-zone .upload-icon { font-size: 24px; margin-bottom: 5px; }
-        #shareSection .upload-zone .text { font-size: 0.85rem; color: var(--festo-dark); font-weight: 500; }
-        #shareSection .upload-zone .file-name { font-size: 0.78rem; color: var(--festo-gold-dark); font-weight: 600; margin-top: 6px; }
-        #shareSection .format-note { display: block; margin-top: 8px; color: #999; font-size: 0.72rem; text-align: center; }
-        #shareSection .file-input-hidden { display: none; }
-        .upload-progress { display: none; margin-top: 8px; }
-        .upload-progress .progress-bar { background: #f0f0f0; border-radius: 10px; height: 8px; overflow: hidden; }
-        .upload-progress .progress-bar .progress-fill { width: 0%; height: 100%; background: var(--festo-gold); transition: width 0.3s; }
-        .upload-progress .progress-text { font-size: 0.75rem; color: var(--festo-gray); margin-top: 4px; }
-        .memory-item { background: var(--festo-white); padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--festo-gold); box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.2s ease; }
-        .memory-item:hover { transform: translateX(4px); box-shadow: 0 4px 12px rgba(212, 168, 76, 0.12); }
-        .memory-item .mem-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--festo-gray); }
-        .memory-item .mem-header strong { color: var(--festo-black); font-weight: 600; }
-        .memory-item .mem-header .mem-type { font-size: 0.65rem; padding: 2px 10px; border-radius: 20px; background: var(--festo-gold-bg); color: var(--festo-gold-dark); font-weight: 600; }
-        .memory-item .mem-header .mem-type.message { background: #E8F0FE; color: #4A7BC4; }
-        .memory-item .mem-header .mem-type.photo { background: #F0F7E8; color: #5A8C3E; }
-        .memory-item .mem-header .mem-type.video { background: #FDE8E8; color: #C44A4A; }
-        .memory-item .mem-text { color: var(--festo-dark); font-size: 0.95rem; margin-top: 6px; padding: 6px 0; line-height: 1.5; }
-        .memory-item .mem-media { margin-top: 10px; border-radius: 10px; overflow: hidden; background: #f5f5f5; }
-        .memory-item .mem-media img { width: 100%; max-height: 280px; object-fit: cover; display: block; }
-        .memory-item .mem-media video { width: 100%; max-height: 280px; object-fit: cover; display: block; background: #1a1a1a; }
-        .memory-item .mem-time { font-size: 0.6rem; color: #bbb; margin-top: 8px; text-align: right; padding-top: 6px; border-top: 1px solid #f0f0f0; }
-        .memory-empty { color: var(--festo-gray); text-align: center; padding: 30px 16px; font-size: 0.9rem; background: var(--festo-gold-bg); border-radius: 12px; border: 2px dashed rgba(212, 168, 76, 0.2); }
-        .footer-menu { display: flex; gap: 10px; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(212, 168, 76, 0.12); flex-shrink: 0; }
-        .footer-btn { flex: 1; padding: 10px 6px; background: var(--festo-gold-bg); border: 2px solid transparent; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: var(--festo-gray); cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; text-align: center; line-height: 1.2; }
-        .footer-btn:hover { background: rgba(212, 168, 76, 0.1); border-color: var(--festo-gold-light); }
-        .footer-btn.active { background: var(--festo-gradient); color: var(--festo-white); border-color: var(--festo-gold); box-shadow: 0 4px 15px rgba(212, 168, 76, 0.2); }
-        .footer-btn .icon-black-lg { display: block; margin-bottom: 2px; }
-        .footer-btn .icon-black-lg svg { width: 22px; height: 22px; }
-        .footer-btn.active .icon-black-lg svg { stroke: var(--festo-white); }
-        .footer-btn small { display: block; font-size: 0.5rem; opacity: 0.7; font-weight: 400; }
-        .footer-btn.active small { color: rgba(255, 255, 255, 0.8); }
-        .back-link { display: block; text-align: center; margin-top: 14px; color: var(--festo-gold); text-decoration: none; font-weight: 600; font-size: 0.75rem; }
-        .back-link:hover { color: var(--festo-gold-dark); text-decoration: underline; }
-        @media (max-width: 480px) {
-            .container { padding: 20px 16px; }
-            .festo-header .logo { font-size: 1.5rem; }
-            .festo-header .tagline { font-size: 0.62rem; letter-spacing: 1px; }
-            .organizer-names { font-size: 1.3rem; }
-            .organizer { font-size: 1.3rem; }
-            .ampersand { font-size: 1.5rem; }
-            .event-suffix { font-size: 1.3rem; }
-            .header-brand { padding-right: 10px; }
-            .header-organizer { padding-left: 10px; }
-            .icon-black-lg svg { width: 20px; height: 20px; }
-            .icon-black svg { width: 18px; height: 18px; }
-            .footer-btn { padding: 8px 4px; font-size: 0.65rem; }
-            .footer-btn .icon-black-lg svg { width: 18px; height: 18px; }
-            .stars-divider { gap: 6px; }
-            .d1 { font-size: 0.6rem; } .d2 { font-size: 0.9rem; } .d3 { font-size: 1.1rem; } .d4 { font-size: 0.8rem; } .d5 { font-size: 0.5rem; }
-            .main-title { font-size: 1.1rem; }
-            .table-number { font-size: 2.5rem; }
-            .form-group input { padding: 18px 16px 6px 16px; padding-left: 18px; }
-            .form-group .floating-label { left: 18px; font-size: 0.8rem; }
-            .btn-primary { font-size: 0.8rem; padding: 12px; }
-            .map-container { gap: 5px; padding: 10px; }
-            .map-table-clickable { padding: 8px 2px; }
-            .map-table-clickable .num { font-size: 0.9rem; }
-            .memory-item .mem-media img, .memory-item .mem-media video { max-height: 200px; }
+        .btn-secondary svg {
+            stroke: #C59B27;
         }
-        @media (max-width: 380px) {
-            .map-container { gap: 4px; padding: 8px; }
-            .map-table-clickable { padding: 6px 2px; }
-            .map-table-clickable .num { font-size: 0.75rem; }
-            .map-table-clickable .label-small { font-size: 0.35rem; }
-            .map-table-clickable .count { font-size: 0.45rem; }
-            .footer-btn { padding: 6px 2px; font-size: 0.6rem; }
-            .footer-btn .icon-black-lg svg { width: 16px; height: 16px; }
-            .festo-header .logo { font-size: 1.5rem; }
-            .organizer-names { font-size: 1.3rem; }
-            .organizer { font-size: 1.3rem; }
-            .ampersand { font-size: 1.5rem; }
-            .event-suffix { font-size: 1.3rem; }
-            .stars-divider { gap: 4px; }
-            .d1 { font-size: 0.5rem; } .d2 { font-size: 0.7rem; } .d3 { font-size: 0.9rem; } .d4 { font-size: 0.6rem; } .d5 { font-size: 0.4rem; }
+
+        /* STILIMI PËR HARTËN DHE URIMET */
+        .content-view-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1A1A1A;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .map-box {
+            background: #FAF6EF;
+            border: 2px dashed #D4A84C;
+            border-radius: 14px;
+            padding: 30px 15px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: #C59B27;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
+        <!-- HEADER -->
         <div class="festo-header">
-            <div class="header-split">
-                <!-- Brand side -->
-                <div class="header-brand">
-                    <div class="logo">Fest<span>O</span></div>
-                    <div class="tagline">✦ <span class="highlight">Find Your Place.</span> Share Your Joy. ✦</div>
+            <div class="header-content">
+                <!-- Pjesa e emrave (Me Event's poshtë, dhe ndryshim automatik nëse emrat janë të gjatë) -->
+                <div class="left-brand" id="brandNamesContainer">
+                    <span id="brandNamesText">X &amp; Y</span>
+                    <span class="event-sub">Event's</span>
+                </div>
+                <div class="header-divider"></div>
+                <div class="right-brand">
+                    <div class="logo-text">Fest<span>O</span></div>
+                    <div class="tagline">✦ <span>Find Your Place.</span> Share Your Joy. ✦</div>
                     <div class="stars-divider">
-                        <span class="star d1">✦</span>
-                        <span class="star d2">✦</span>
-                        <span class="star d3">✦</span>
-                        <span class="star d4">✦</span>
-                        <span class="star d5">✦</span>
-                    </div>
-                </div>
-
-                <!-- Thin decorative divider -->
-                <div class="header-divider">
-                    <div class="vline"></div>
-                    <div class="vdot"></div>
-                    <div class="vline"></div>
-                </div>
-
-                <!-- Organizer side -->
-                <div class="header-organizer">
-                    <div class="organizer-wrapper">
-                        <div class="organizer-names">
-                            <div class="names-row">
-                                <span class="organizer" id="firstNameDisplay">X</span>
-                                <span class="ampersand">&amp;</span>
-                                <span class="organizer" id="secondNameDisplay">Y</span>
-                            </div>
-                            <div class="suffix-row">
-                                <span class="event-suffix">Event's</span>
-                            </div>
-                        </div>
-                        <div class="organizer-label">Organizatorët</div>
+                        <span class="star d1">★</span>
+                        <span class="star d2">★</span>
+                        <span class="star d3">★</span>
+                        <span class="star d4">★</span>
+                        <span class="star d5">★</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="primary-section" id="findTableSection">
-            <!-- ... rest of content unchanged ... -->
+        <!-- PAMJA 1: KËRKIMI I TAVOLINËS -->
+        <div id="searchView" class="view active">
+            <div class="search-section">
+                <div class="main-title">Shkruaj emrin për të gjetur tavolinën tënde</div>
+                <div class="main-sub">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Gjej vendin tënd në sekonda
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="guestName" placeholder="Emër Mbiemër (p.sh. Arben Hoxha)">
+                </div>
+
+                <button class="btn-primary" onclick="searchTable()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    Gjej Tavolinën
+                </button>
+
+                <div id="searchResult" class="result-box">
+                    <h4 id="resTitle"></h4>
+                    <p id="resDesc"></p>
+                </div>
+            </div>
         </div>
-        <!-- ... -->
+
+        <!-- PAMJA 2: HARTA E SALLËS -->
+        <div id="mapView" class="view">
+            <button class="back-btn" onclick="switchView('searchView')">← Kthehu te Kërkimi</button>
+            <div class="content-view-title">Harta e Sallës së Dasmës</div>
+            <div class="map-box">
+                🗺️ [ Këtu shfaqet skema grafike e sallës, tavolinat VIP, tavolinat e miqve dhe pozicioni juaj ]
+            </div>
+            <button class="btn-primary" onclick="switchView('searchView')">Kthehu te Kërkimi</button>
+        </div>
+
+        <!-- PAMJA 3: NDAJ GËZIMIN -->
+        <div id="joyView" class="view">
+            <button class="back-btn" onclick="switchView('searchView')">← Kthehu te Kërkimi</button>
+            <div class="content-view-title">Ndaj Gëzimin me Çiftin</div>
+            <div class="form-group">
+                <textarea id="wishText" rows="3" placeholder="Shkruani urimin tuaj për çiftin..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="sendWish()">Dërgo Urimin</button>
+            <div id="wishResult" class="result-box"></div>
+        </div>
+
+        <!-- BUTONAT SEKUNDARE (Të pranishme në çdo faqe) -->
+        <div class="secondary-actions">
+            <button class="btn-secondary" onclick="switchView('mapView')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                Shiko Hartën e Sallës
+            </button>
+            <button class="btn-secondary" onclick="switchView('joyView')">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Ndaj Gëzimin (Urime)
+            </button>
+        </div>
     </div>
+
+    <script>
+        // Funksion automatik për të kontrolluar nëse emrat janë shumë të gjatë
+        function checkAndFormatNames() {
+            const container = document.getElementById('brandNamesContainer');
+            
+            // Këtu vendos emrat e çiftit (ndryshoji sipas dëshirës)
+            const coupleNames = "X & Y"; 
+
+            if (coupleNames.length > 10) {
+                container.classList.add('long-names');
+                const parts = coupleNames.split('&');
+                if(parts.length === 2) {
+                    container.innerHTML = `
+                        <span class="name-part">${parts[0].trim()}</span>
+                        <span class="ampersand">&amp;</span>
+                        <span class="name-part">${parts[1].trim()}</span>
+                        <span class="event-sub">Event's</span>
+                    `;
+                }
+            } else {
+                container.classList.remove('long-names');
+                container.innerHTML = `
+                    <span id="brandNamesText">${coupleNames}</span>
+                    <span class="event-sub">Event's</span>
+                `;
+            }
+        }
+
+        // Ekzekutohet sapo të ngarkohet faqja
+        window.onload = checkAndFormatNames;
+
+        // Funksioni për të kaluar mes faqeve/pamjeve
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
+
+        // Simulim funksional i kërkimit të tavolinës
+        function searchTable() {
+            const name = document.getElementById('guestName').value.trim();
+            const resBox = document.getElementById('searchResult');
+            const resTitle = document.getElementById('resTitle');
+            const resDesc = document.getElementById('resDesc');
+
+            if(name === "") {
+                alert("Ju lutem shkruani emrin tuaj!");
+                return;
+            }
+
+            resBox.style.display = "block";
+            resTitle.innerText = "Tavolina juaj: Tavolina Nr. 4 (VIP)";
+            resDesc.innerText = "I/E ftuar: " + name + "\nPersonat e tjerë në tavolinë: Ana, Genci, Miri dhe Bora.";
+        }
+
+        // Simulim i dërgimit të urimit
+        function sendWish() {
+            const text = document.getElementById('wishText').value.trim();
+            const wishRes = document.getElementById('wishResult');
+            if(text === "") {
+                alert("Ju lutem shkruani një urim para se ta dërgoni!");
+                return;
+            }
+            wishRes.style.display = "block";
+            wishRes.innerHTML = "<h4>Urimi u dërgua me sukses! 🥂</h4><p>Faleminderit që ndanë gëzimin me çiftin!</p>";
+            document.getElementById('wishText').value = "";
+        }
+    </script>
 </body>
 </html>
