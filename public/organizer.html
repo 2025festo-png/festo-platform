@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FestO - Paneli i Organizatorit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --festo-gold: #D4A84C; --festo-gold-light: #E8C97A; --festo-gold-dark: #B8943E;
+            --festo-gold-bg: #FDF8F0; --festo-white: #FFFFFF; --festo-black: #1A1A1A;
+            --festo-dark: #2D2D2D; --festo-gray: #888888; --festo-light-gray: #F5F5F5;
+            --festo-shadow: 0 20px 60px rgba(212,168,76,0.2);
+            --festo-gradient: linear-gradient(135deg, #D4A84C, #B8943E);
+            --festo-gradient-light: linear-gradient(135deg, #FDF8F0, #F5EDD6);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--festo-gradient-light); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
+        .container { max-width: 640px; width: 100%; margin: 20px auto; background: var(--festo-white); border-radius: 28px; padding: 35px 30px; box-shadow: var(--festo-shadow); border: 1px solid rgba(212,168,76,0.15); }
+        .festo-header { text-align: center; padding-bottom: 16px; border-bottom: 1px solid rgba(212,168,76,0.1); margin-bottom: 20px; }
+        .festo-header .logo { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--festo-black); }
+        .festo-header .logo span { color: var(--festo-gold); font-style: italic; }
+        .festo-header .tagline { font-family: 'Playfair Display', serif; font-size: 0.85rem; color: var(--festo-gray); letter-spacing: 1.5px; margin-top: 4px; }
+        .event-title-block { text-align: center; margin-bottom: 22px; }
+        .event-title-block .panel-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--festo-gold-dark); font-weight: 600; }
+        .event-title-block h1 { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--festo-black); margin-top: 4px; }
+        .status-box { text-align: center; padding: 40px 20px; color: var(--festo-gray); }
+        .status-box.error { color: #dc3545; }
+        .gallery-stats { text-align: center; color: var(--festo-gray); font-size: 0.85rem; margin-bottom: 18px; }
+        .gallery-section h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--festo-black); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 26px; }
+        .gallery-item { position: relative; border-radius: 12px; overflow: hidden; background: var(--festo-light-gray); aspect-ratio: 1 / 1; border: 1px solid rgba(0,0,0,0.06); }
+        .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gallery-item .gallery-item-type { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.6rem; padding: 2px 7px; border-radius: 20px; }
+        .gallery-item .gallery-item-name { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.65), transparent); color: #fff; font-size: 0.65rem; padding: 14px 8px 6px; }
+        .gallery-item .gallery-item-delete { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(220,53,69,0.9); color: #fff; cursor: pointer; font-size: 0.8rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .gallery-item .gallery-item-delete:hover { background: #c82333; }
+        .memory-card { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; background: var(--festo-light-gray); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+        .memory-card .memory-card-body strong { color: var(--festo-black); font-size: 0.88rem; }
+        .memory-card .memory-card-body p { color: var(--festo-dark); font-size: 0.88rem; margin-top: 3px; line-height: 1.4; }
+        .memory-card .btn-icon-delete { flex-shrink: 0; background: none; border: none; cursor: pointer; color: #aaa; font-size: 1.1rem; padding: 2px 4px; }
+        .memory-card .btn-icon-delete:hover { color: #dc3545; }
+        .empty-state { color: #999; text-align: center; padding: 20px; font-size: 0.85rem; font-style: italic; background: var(--festo-gold-bg); border-radius: 12px; border: 2px dashed rgba(212,168,76,0.2); }
+        .refresh-row { text-align: center; margin-top: 10px; }
+        .btn-refresh { padding: 8px 20px; background: var(--festo-gold-bg); border: 2px solid rgba(212,168,76,0.25); border-radius: 50px; color: var(--festo-gold-dark); font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+        .btn-refresh:hover { background: rgba(212,168,76,0.15); }
+        @media (max-width: 480px) {
+            body { padding: 0; }
+            .container { border-radius: 0; min-height: 100vh; margin: 0; padding: 20px 16px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="festo-header">
+            <div class="logo">Fest<span>O</span></div>
+            <div class="tagline">✦ Paneli i Organizatorit ✦</div>
+        </div>
+
+        <div id="statusArea"></div>
+        <div id="panelArea" style="display:none;">
+            <div class="event-title-block">
+                <div class="panel-label">Galeria e Eventit</div>
+                <h1 id="eventTitle">— & —</h1>
+            </div>
+            <div class="gallery-stats" id="galleryStats"></div>
+
+            <div class="gallery-section">
+                <h4>📸 Foto &amp; Video</h4>
+                <div id="mediaGrid"></div>
+            </div>
+
+            <div class="gallery-section">
+                <h4>💬 Urimet</h4>
+                <div id="memoriesList"></div>
+            </div>
+
+            <div class="refresh-row">
+                <button class="btn-refresh" id="refreshBtn">🔄 Rifresko</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const eventId = pathSegments[pathSegments.length - 1] || '';
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token') || '';
+
+        const statusArea = document.getElementById('statusArea');
+        const panelArea = document.getElementById('panelArea');
+
+        function showStatus(html, isError) {
+            panelArea.style.display = 'none';
+            statusArea.innerHTML = `<div class="status-box${isError ? ' error' : ''}">${html}</div>`;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        async function init() {
+            if (!eventId || !token) {
+                showStatus('❌ Ky link nuk është i plotë. Kontaktoni FestO për një link të ri.', true);
+                return;
+            }
+            showStatus('🔍 Duke verifikuar linkun...');
+            try {
+                const res = await fetch(`/api/organizer/events/${eventId}/verify?token=${encodeURIComponent(token)}`);
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    showStatus(`❌ ${escapeHtml(err.error || 'Linku nuk është i vlefshëm.')}`, true);
+                    return;
+                }
+                const data = await res.json();
+                const firstName = data.firstName || '?';
+                const secondName = data.secondName || '?';
+                document.getElementById('eventTitle').textContent = `${firstName} & ${secondName}`;
+                statusArea.innerHTML = '';
+                panelArea.style.display = 'block';
+                loadGallery();
+            } catch (err) {
+                console.error('❌ Gabim në verifikim:', err);
+                showStatus('❌ Gabim në lidhje me serverin.', true);
+            }
+        }
+
+        async function loadGallery() {
+            const mediaGrid = document.getElementById('mediaGrid');
+            const memoriesList = document.getElementById('memoriesList');
+            mediaGrid.innerHTML = '<div class="empty-state">Duke ngarkuar...</div>';
+            memoriesList.innerHTML = '';
+            try {
+                const res = await fetch(`/api/organizer/events/${eventId}/gallery?token=${encodeURIComponent(token)}`);
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    mediaGrid.innerHTML = `<div class="empty-state">❌ ${escapeHtml(err.error || 'Gabim në ngarkim')}</div>`;
+                    return;
+                }
+                const { media, memories } = await res.json();
+
+                document.getElementById('galleryStats').textContent = `📸 ${media.length} media · 💬 ${memories.length} urime`;
+
+                mediaGrid.innerHTML = media.length === 0
+                    ? '<div class="empty-state">📭 Ende nuk ka foto/video nga mysafirët</div>'
+                    : `<div class="gallery-grid">${media.map(galleryItemHtml).join('')}</div>`;
+
+                memoriesList.innerHTML = memories.length === 0
+                    ? '<div class="empty-state">📭 Ende nuk ka urime</div>'
+                    : memories.map(memoryCardHtml).join('');
+
+                wireActions();
+            } catch (err) {
+                console.error('❌ Gabim në ngarkimin e galerisë:', err);
+                mediaGrid.innerHTML = '<div class="empty-state">❌ Gabim në lidhje me serverin.</div>';
+            }
+        }
+
+        function galleryItemHtml(item) {
+            const isVideo = item.type === 'video';
+            const mediaTag = isVideo
+                ? `<video src="${item.file_url}" muted preload="metadata"></video>`
+                : `<img src="${item.file_url}" alt="${escapeHtml(item.name || '')}" loading="lazy">`;
+            return `<div class="gallery-item">
+                ${mediaTag}
+                <span class="gallery-item-type">${isVideo ? '🎥' : '📸'}</span>
+                <button class="gallery-item-delete" data-action="delete-media" data-id="${item.id}" title="Fshi">✕</button>
+                <span class="gallery-item-name">${escapeHtml(item.name || 'Anonim')}</span>
+            </div>`;
+        }
+
+        function memoryCardHtml(memory) {
+            return `<div class="memory-card">
+                <div class="memory-card-body">
+                    <strong>${escapeHtml(memory.name || 'Anonim')}</strong>
+                    <p>${escapeHtml(memory.text || '')}</p>
+                </div>
+                <button class="btn-icon-delete" data-action="delete-memory" data-id="${memory.id}" title="Fshi">🗑️</button>
+            </div>`;
+        }
+
+        function wireActions() {
+            document.querySelectorAll('[data-action="delete-media"]').forEach(btn => {
+                btn.addEventListener('click', () => deleteMedia(btn.dataset.id));
+            });
+            document.querySelectorAll('[data-action="delete-memory"]').forEach(btn => {
+                btn.addEventListener('click', () => deleteMemory(btn.dataset.id));
+            });
+        }
+
+        async function deleteMedia(mediaId) {
+            if (!confirm('⚠️ A je i sigurt që do ta fshish këtë foto/video? Ky veprim nuk kthehet mbrapsht.')) return;
+            try {
+                const res = await fetch(`/api/organizer/events/${eventId}/media/${mediaId}?token=${encodeURIComponent(token)}`, { method: 'DELETE' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në fshirje'); }
+                loadGallery();
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        async function deleteMemory(memoryId) {
+            if (!confirm('⚠️ A je i sigurt që do ta fshish këtë urim?')) return;
+            try {
+                const res = await fetch(`/api/organizer/events/${eventId}/memories/${memoryId}?token=${encodeURIComponent(token)}`, { method: 'DELETE' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në fshirje'); }
+                loadGallery();
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        document.getElementById('refreshBtn').addEventListener('click', loadGallery);
+        init();
+    </script>
+</body>
+</html>
