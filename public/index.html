@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestO - Platforma e Dasmave</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --festo-gold: #D4A84C; --festo-gold-light: #E8C97A; --festo-gold-dark: #B8943E;
+            --festo-gold-bg: #FDF8F0; --festo-white: #FFFFFF; --festo-black: #1A1A1A;
+            --festo-dark: #2D2D2D; --festo-gray: #888888; --festo-light-gray: #F5F5F5;
+            --festo-shadow: 0 20px 60px rgba(212,168,76,0.2);
+            --festo-gradient: linear-gradient(135deg, #D4A84C, #B8943E);
+            --festo-gradient-light: linear-gradient(135deg, #FDF8F0, #F5EDD6);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--festo-gradient-light); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        .dashboard-container { max-width: 800px; width: 100%; margin: 0 auto; background: var(--festo-white); border-radius: 28px; padding: 45px 40px; box-shadow: var(--festo-shadow); border: 1px solid rgba(212,168,76,0.15); position: relative; overflow: hidden; }
+        .dashboard-container::before { content: '✦ ✦ ✦ ✦ ✦'; position: absolute; top: -10px; right: -30px; font-size: 6rem; color: rgba(212,168,76,0.04); pointer-events: none; letter-spacing: 20px; transform: rotate(10deg); }
+        .festo-center { text-align: center; padding: 10px 0 15px; position: relative; z-index: 1; }
+        .festo-center .logo { font-family: 'Playfair Display', serif; font-size: 3.8rem; font-weight: 700; color: var(--festo-black); letter-spacing: -1px; display: inline-block; position: relative; }
+        .festo-center .logo span { color: var(--festo-gold); font-style: italic; }
+        .festo-center .logo::after { content: ''; position: absolute; bottom: -6px; left: 15%; width: 70%; height: 2px; background: linear-gradient(90deg, transparent, var(--festo-gold), transparent); border-radius: 2px; }
+        .festo-center .tagline-wrapper { width: 100%; text-align: center; margin-top: 12px; }
+        .festo-center .tagline { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--festo-gray); letter-spacing: 3px; font-weight: 400; }
+        .festo-center .tagline .highlight { color: var(--festo-gold); font-weight: 700; }
+        .festo-center .tagline-shqip { font-family: 'Playfair Display', serif; font-size: 0.85rem; color: #bbb; letter-spacing: 2px; margin-top: 4px; font-weight: 300; font-style: italic; }
+        .stars-divider { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 14px; user-select: none; }
+        .stars-divider .star { color: var(--festo-gold); display: inline-block; opacity: 0.6; font-weight: 300; line-height: 1; animation: floatStar 2.5s ease-in-out infinite; }
+        .d1 { font-size: 0.7rem; animation-delay: 0s; } .d2 { font-size: 1.1rem; animation-delay: 0.4s; }
+        .d3 { font-size: 1.4rem; animation-delay: 0.8s; } .d4 { font-size: 1.0rem; animation-delay: 1.2s; }
+        .d5 { font-size: 0.6rem; animation-delay: 1.6s; }
+        @keyframes floatStar { 0%,100% { transform: translateY(0) scale(1); opacity: 0.3; } 50% { transform: translateY(-8px) scale(1.2); opacity: 0.9; } }
+        h2 { font-family: 'Playfair Display', serif; color: var(--festo-black); margin: 25px 0 15px; font-size: 1.5rem; font-weight: 700; position: relative; z-index: 1; }
+        .form-group { margin-bottom: 18px; position: relative; z-index: 1; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--festo-dark); font-size: 0.95rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 14px 18px; border: 2px solid #E8E0EC; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: 'Inter', sans-serif; background: var(--festo-white); color: var(--festo-dark); }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212,168,76,0.12); }
+        .form-group textarea { resize: vertical; min-height: 140px; font-family: 'Inter', monospace; }
+        .form-group small { color: #999; font-size: 0.8rem; display: block; margin-top: 6px; }
+        .btn-primary { display: block; width: 100%; max-width: 400px; margin: 0 auto; padding: 16px 20px; background: var(--festo-gradient); color: var(--festo-white); border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1.5px; font-family: 'Inter', sans-serif; text-transform: uppercase; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(212,168,76,0.4); background: var(--festo-gold-dark); }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-secondary { display: block; width: 100%; max-width: 400px; margin: 10px auto 0; padding: 16px 20px; background: var(--festo-black); color: var(--festo-white); border: 2px solid var(--festo-gold); border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1.5px; font-family: 'Inter', sans-serif; text-transform: uppercase; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-secondary:hover { background: var(--festo-gold); color: var(--festo-black); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212,168,76,0.35); }
+        .btn-secondary:active { transform: translateY(0); background: var(--festo-black); }
+        .btn-pdf { display: block; width: 100%; max-width: 400px; margin: 10px auto 0; padding: 14px 20px; background: var(--festo-gold); color: var(--festo-white); border: none; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-family: 'Inter', sans-serif; text-transform: uppercase; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-pdf:hover { background: var(--festo-gold-dark); transform: translateY(-3px); box-shadow: 0 10px 30px rgba(212,168,76,0.3); }
+        .btn-pdf:active { transform: translateY(0); background: var(--festo-gold); }
+        .result { margin-top: 20px; padding: 25px; background: var(--festo-gold-bg); border-radius: 16px; border: 2px solid var(--festo-gold); display: none; position: relative; z-index: 1; }
+        .result.show { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .result .qr-code { text-align: center; margin: 15px 0; }
+        .result .qr-code img { max-width: 200px; border: 3px solid var(--festo-white); border-radius: 14px; padding: 12px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+        .result .event-link { background: rgba(212,168,76,0.06); padding: 14px; border-radius: 10px; margin: 10px 0; word-break: break-all; font-family: 'Inter', monospace; font-size: 0.9rem; color: var(--festo-dark); border: 1px solid rgba(212,168,76,0.1); }
+        .admin-section { margin-top: 35px; padding-top: 25px; border-top: 2px solid rgba(212,168,76,0.1); position: relative; z-index: 1; }
+        .admin-event-wrapper { margin-bottom: 12px; }
+        .admin-event { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--festo-gold-bg); border-radius: 14px; border: 1px solid rgba(212,168,76,0.1); transition: all 0.3s ease; }
+        .admin-event:hover { box-shadow: 0 4px 15px rgba(212,168,76,0.1); }
+        .admin-event .event-name { font-weight: 600; color: var(--festo-black); font-size: 1.1rem; font-family: 'Playfair Display', serif; }
+        .admin-event .event-details { color: var(--festo-gray); font-size: 0.85rem; margin-top: 2px; }
+        .admin-event .event-id-inline { font-family: 'Inter', monospace; font-size: 0.7rem; color: #bbb; }
+        .admin-event .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-view { padding: 6px 16px; background: var(--festo-gold); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-view:hover { background: var(--festo-gold-dark); }
+        .btn-view:active { background: var(--festo-gold); }
+        .btn-view.active { background: var(--festo-black); }
+        .btn-gallery { padding: 6px 16px; background: #4A7BC4; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-gallery:hover { background: #3A639E; }
+        .btn-gallery:active { background: #4A7BC4; }
+        .btn-gallery.active { background: var(--festo-black); }
+        .btn-delete { padding: 6px 16px; background: #dc3545; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-delete:hover { background: #c82333; }
+        .btn-delete:active { background: #dc3545; }
+        .btn-pdf-sm { padding: 6px 16px; background: var(--festo-gold); color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.7rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-pdf-sm:hover { background: var(--festo-gold-dark); }
+        .btn-pdf-sm:active { background: var(--festo-gold); }
+        .btn-organizer-link { padding: 6px 16px; background: #8A5CC2; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-organizer-link:hover { background: #6F449E; }
+        .btn-organizer-link.active { background: var(--festo-black); }
+        .no-events { color: #999; text-align: center; padding: 30px; font-style: italic; }
+        .organizer-link-box { margin-top: 10px; padding: 14px 16px; background: #F5EFFB; border: 2px solid rgba(138,92,194,0.25); border-radius: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; animation: fadeIn 0.3s ease; }
+        .organizer-link-box .organizer-link-label { width: 100%; font-size: 0.78rem; color: var(--festo-gray); }
+        .organizer-link-box .organizer-link-text { flex: 1; min-width: 160px; font-family: 'Inter', monospace; font-size: 0.78rem; color: var(--festo-dark); word-break: break-all; }
+        .organizer-link-box .btn-copy-link { padding: 7px 16px; background: #8A5CC2; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
+        .organizer-link-box .btn-copy-link:hover { background: #6F449E; }
+        .btn-regenerate { padding: 6px 16px; background: #B8943E; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 0.8rem; transition: all 0.3s ease; outline: none; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .btn-regenerate:hover { background: #93752F; }
+        .regen-result-box { margin-top: 10px; padding: 18px 20px; background: var(--festo-gold-bg); border: 2px solid rgba(212,168,76,0.3); border-radius: 16px; animation: fadeIn 0.3s ease; }
+        .regen-result-box .regen-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--festo-black); font-size: 1rem; margin-bottom: 4px; }
+        .regen-result-box .regen-warning { color: var(--festo-gray); font-size: 0.8rem; margin-bottom: 14px; }
+        .regen-result-box .regen-qr { text-align: center; margin-bottom: 14px; }
+        .regen-result-box .regen-qr img { max-width: 150px; border: 3px solid var(--festo-white); border-radius: 12px; padding: 8px; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+        .regen-result-box .organizer-link-box { margin-top: 0; margin-bottom: 8px; }
+
+        /* ===== PANELI I TË FTUARVE (brenda Shiko) ===== */
+        .guest-panel { margin-top: 10px; padding: 18px 20px; background: var(--festo-white); border: 2px solid rgba(212,168,76,0.15); border-radius: 16px; animation: fadeIn 0.3s ease; }
+        .guest-panel-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(212,168,76,0.12); }
+        .guest-panel-header .gp-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--festo-black); font-size: 1.05rem; }
+        .guest-panel-header .gp-id { font-family: 'Inter', monospace; font-size: 0.7rem; color: #bbb; margin-top: 3px; }
+        .guest-panel-header .gp-open-link { color: var(--festo-gold-dark); font-size: 0.8rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+        .guest-panel-header .gp-open-link:hover { text-decoration: underline; }
+        .guest-add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .guest-add-row input { flex: 1; min-width: 90px; padding: 10px 14px; border: 2px solid #E8E0EC; border-radius: 12px; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: var(--festo-dark); }
+        .guest-add-row input:focus { outline: none; border-color: var(--festo-gold); box-shadow: 0 0 0 4px rgba(212,168,76,0.12); }
+        .guest-add-row .tavoline-input { max-width: 90px; flex: 0 0 90px; }
+        .btn-add-guest { padding: 10px 22px; background: var(--festo-gradient); color: var(--festo-white); border: none; border-radius: 50px; font-weight: 600; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
+        .btn-add-guest:hover { background: var(--festo-gold-dark); }
+        .guest-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #f0f0f0; gap: 10px; }
+        .guest-row:last-child { border-bottom: none; }
+        .guest-row .guest-name { color: var(--festo-dark); font-size: 0.92rem; }
+        .guest-row .guest-name .table-tag { color: var(--festo-gray); font-size: 0.82rem; }
+        .guest-row .guest-icons { display: flex; gap: 8px; flex-shrink: 0; }
+        .guest-row .icon-btn { background: none; border: none; cursor: pointer; color: #aaa; padding: 4px 6px; font-size: 1rem; border-radius: 8px; transition: all 0.2s ease; line-height: 1; }
+        .guest-row .icon-btn.edit:hover { color: var(--festo-gold-dark); background: rgba(212,168,76,0.1); }
+        .guest-row .icon-btn.delete:hover { color: #dc3545; background: rgba(220,53,69,0.08); }
+        .guest-row.editing { flex-wrap: wrap; }
+        .guest-row.editing input { padding: 7px 10px; border: 2px solid #E8E0EC; border-radius: 8px; font-size: 0.85rem; }
+        .guest-row.editing input.name-input { width: 110px; }
+        .guest-row.editing input.table-input { width: 60px; }
+        .guest-panel-empty { color: #999; text-align: center; padding: 18px; font-size: 0.85rem; font-style: italic; }
+
+        /* ===== PANELI I GALERISË (media + urime, brenda "🖼️ Galeria") ===== */
+        .gallery-panel { margin-top: 10px; padding: 18px 20px; background: var(--festo-white); border: 2px solid rgba(74,123,196,0.18); border-radius: 16px; animation: fadeIn 0.3s ease; }
+        .gallery-panel-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid rgba(74,123,196,0.14); }
+        .gallery-panel-header .gp-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--festo-black); font-size: 1.05rem; }
+        .gallery-panel-header .gp-count { color: var(--festo-gray); font-size: 0.78rem; margin-top: 3px; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .gallery-item { position: relative; border-radius: 12px; overflow: hidden; background: var(--festo-light-gray); aspect-ratio: 1 / 1; border: 1px solid rgba(0,0,0,0.06); }
+        .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gallery-item .gallery-item-type { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.6rem; padding: 2px 7px; border-radius: 20px; }
+        .gallery-item .gallery-item-name { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.65), transparent); color: #fff; font-size: 0.65rem; padding: 14px 8px 6px; }
+        .gallery-item .gallery-item-delete { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border-radius: 50%; border: none; background: rgba(220,53,69,0.9); color: #fff; cursor: pointer; font-size: 0.75rem; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .gallery-item .gallery-item-delete:hover { background: #c82333; }
+        .gallery-memories { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(74,123,196,0.14); }
+        .gallery-memories h5 { font-family: 'Playfair Display', serif; font-size: 0.92rem; color: var(--festo-black); margin-bottom: 8px; }
+        .memory-card { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; background: var(--festo-light-gray); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+        .memory-card .memory-card-body strong { color: var(--festo-black); font-size: 0.85rem; }
+        .memory-card .memory-card-body p { color: var(--festo-dark); font-size: 0.85rem; margin-top: 3px; line-height: 1.4; }
+        .memory-card .icon-btn.delete { flex-shrink: 0; }
+        .gallery-panel-empty { color: #999; text-align: center; padding: 18px; font-size: 0.85rem; font-style: italic; }
+
+        @media (max-width: 600px) {
+            .dashboard-container { padding: 25px 20px; border-radius: 20px; }
+            .festo-center .logo { font-size: 2.8rem; } .festo-center .tagline { font-size: 0.95rem; letter-spacing: 2px; }
+            .festo-center .tagline-shqip { font-size: 0.75rem; } .stars-divider { gap: 6px; margin-top: 10px; }
+            h2 { font-size: 1.2rem; } .admin-event { flex-direction: column; gap: 10px; align-items: flex-start; } .admin-event .actions { width: 100%; } .admin-event .actions button { flex: 1; }
+            .btn-primary, .btn-secondary, .btn-pdf { max-width: 300px; padding: 14px 16px; font-size: 0.95rem; }
+            .guest-add-row .tavoline-input { flex: 1 1 90px; }
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+        }
+        @media (max-width: 400px) {
+            .dashboard-container { padding: 15px 12px; } .festo-center .logo { font-size: 2.2rem; }
+            .festo-center .tagline { font-size: 0.8rem; letter-spacing: 1px; } .festo-center .tagline-shqip { font-size: 0.65rem; }
+            .stars-divider { gap: 4px; margin-top: 8px; } .btn-primary, .btn-secondary, .btn-pdf { max-width: 100%; padding: 12px 14px; font-size: 0.85rem; }
+        }
+        .festo-hidden { display: none !important; }
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--festo-gradient-light); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
+        .login-card { max-width: 420px; width: 100%; background: var(--festo-white); border-radius: 28px; padding: 45px 40px; box-shadow: var(--festo-shadow); border: 1px solid rgba(212,168,76,0.15); text-align: center; animation: fadeIn 0.5s ease; }
+        .login-card .logo { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 700; color: var(--festo-black); margin-bottom: 8px; }
+        .login-card .logo span { color: var(--festo-gold); font-style: italic; }
+        .login-card .tagline { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--festo-gray); letter-spacing: 2px; margin-bottom: 30px; }
+        .login-card .form-group { text-align: left; margin-bottom: 16px; } .login-card .form-group input { background: var(--festo-light-gray); }
+        .login-card .error { color: #dc3545; font-size: 0.9rem; margin-top: 12px; min-height: 1.2em; } .login-card .btn-primary { margin-top: 10px; }
+        #logoutBtn { position: absolute; top: 18px; right: 18px; padding: 8px 18px; background: transparent; color: var(--festo-gold-dark); border: 1.5px solid var(--festo-gold); border-radius: 50px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: 'Inter', sans-serif; z-index: 10; }
+        #logoutBtn:hover { background: var(--festo-gold); color: var(--festo-black); }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <div class="login-card">
+            <div class="logo">Fest<span>O</span></div>
+            <div class="tagline">Hyrje për Administratorin</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Përdoruesi</label>
+                    <input type="text" id="loginUsername" autocomplete="username" placeholder="Përdoruesi..." required>
+                </div>
+                <div class="form-group">
+                    <label>Fjalëkalimi</label>
+                    <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Fjalëkalimi..." required>
+                </div>
+                <button type="submit" class="btn-primary">Hyr</button>
+                <div class="error" id="loginError"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard" class="festo-hidden">
+        <div class="dashboard-container" style="position:relative;">
+            <button id="logoutBtn" title="Dil">Dil</button>
+
+            <div class="festo-center">
+                <div class="logo-wrapper">
+                    <div class="logo">Fest<span>O</span></div>
+                    <div class="tagline-wrapper">
+                        <div class="tagline">✦ <span class="highlight">Find Your Place.</span> Share Your Joy. ✦</div>
+                        <div class="tagline-shqip">Gjej Vendin. Ndaj Gëzimin.</div>
+                        <div class="stars-divider">
+                            <span class="star d1">✦</span><span class="star d2">✦</span><span class="star d3">✦</span><span class="star d4">✦</span><span class="star d5">✦</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>📋 Krijo Eventin Tënd</h2>
+
+            <div class="form-group">
+                <label>Emri i parë i organizatorit</label>
+                <input type="text" id="organizerFirstName" placeholder="Emri i parë...">
+            </div>
+            <div class="form-group">
+                <label>Emri i dytë i organizatorit</label>
+                <input type="text" id="organizerSecondName" placeholder="Emri i dytë...">
+            </div>
+            <div class="form-group">
+                <label>Data</label>
+                <input type="date" id="eventDate">
+            </div>
+            <div class="form-group">
+                <label>Vendi</label>
+                <input type="text" id="eventVenue" placeholder="Pallati i Dasmave">
+            </div>
+            <div class="form-group">
+                <label>Lista e të ftuarve</label>
+                <textarea id="guestList" placeholder="Arben, 3&#10;Elena, 3&#10;Mark, 5&#10;Sofia, 5"></textarea>
+                <small>📝 Një emër për rresht, të ndarë me presje nga numri i tavolinës</small>
+            </div>
+
+            <button class="btn-primary" id="createBtn">Krijo Event</button>
+
+            <div class="result" id="result">
+                <h3 style="color:var(--festo-black);">✅ Eventi u krijua!</h3>
+                <div class="qr-code" id="qrCodeContainer"></div>
+                <p><strong>Linku i eventit:</strong></p>
+                <div class="event-link" id="eventLink"></div>
+                <p style="margin-top:10px; color:var(--festo-gray); font-size:0.9rem;">📱 Të ftuarit skanojnë QR kodin ose klikojnë linkun</p>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+                    <button class="btn-secondary" id="reloadEventsBtn">📊 Shiko të gjitha eventet</button>
+                    <button class="btn-pdf" id="pdfBtn" style="display:none;">📄 Shkarko PDF me QR Kod</button>
+                </div>
+                <div class="organizer-link-box" id="newEventOrganizerLink" style="display:none;">
+                    <div class="organizer-link-label">🔗 Linku për çiftin (organizatorët) — menaxhojnë vetëm galerinë e eventit të tyre:</div>
+                    <div class="organizer-link-text" id="newEventOrganizerLinkText"></div>
+                    <button class="btn-copy-link" id="newEventCopyLinkBtn">📋 Kopjo</button>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h2>📊 Paneli i Administrimit</h2>
+                <div id="adminEvents">
+                    <div class="no-events">🔍 Duke ngarkuar eventet...</div>
+                </div>
+            </div>
+
+            <div class="festo-footer">
+                <span class="black">FestO</span> · <span class="gold">Find Your Place. Share Your Joy.</span><br>
+                <span style="font-size:0.7rem; color:#ccc;">Gjej Vendin. Ndaj Gëzimin.</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        const BACKEND_URL = '';
+        let currentEventId = null;
+        let currentQrCodeDataUrl = null;
+        let expandedEventId = null; // eventi që ka aktualisht panelin e të ftuarve të hapur
+        let expandedGalleryEventId = null; // eventi që ka aktualisht panelin e galerisë të hapur
+        let expandedOrganizerLinkEventId = null; // eventi që ka aktualisht kutinë e linkut të organizatorit të hapur
+        let adminEventsCache = []; // eventet e ngarkuara së fundmi (për me nxjerrë organizerToken pa kërkesë shtesë)
+
+        async function createNewEvent() {
+            const firstName = document.getElementById('organizerFirstName').value.trim();
+            const secondName = document.getElementById('organizerSecondName').value.trim();
+            const eventDate = document.getElementById('eventDate').value;
+            const eventVenue = document.getElementById('eventVenue').value.trim();
+            const guestText = document.getElementById('guestList').value.trim();
+
+            if (!firstName || !secondName) { alert('📝 Ju lutem shkruani të dy emrat e organizatorëve.'); return; }
+            if (!guestText) { alert('📝 Ju lutem shtoni të ftuarit'); return; }
+
+            const guests = guestText.split('\n').filter(line => line.trim()).map(line => {
+                const parts = line.split(',').map(s => s.trim());
+                return { name: parts[0], table: parseInt(parts[1]) || 1 };
+            });
+            if (guests.length === 0) { alert('📝 Nuk u gjet asnjë i ftuar'); return; }
+
+            const eventData = { eventName: `${firstName} & ${secondName}`, firstName, secondName, date: eventDate || new Date().toISOString().split('T')[0], venue: eventVenue || 'Vend i pacaktuar', guests };
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/events`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(eventData)
+                });
+                if (!response.ok) { const errorText = await response.text(); throw new Error(errorText || `HTTP error! status: ${response.status}`); }
+                const result = await response.json();
+                currentEventId = result.eventId; currentQrCodeDataUrl = result.qrCode;
+                const resultDiv = document.getElementById('result'); resultDiv.classList.add('show');
+                document.getElementById('qrCodeContainer').innerHTML = `<img src="${result.qrCode}" alt="QR Kod">`;
+                document.getElementById('eventLink').textContent = result.qrUrl;
+
+                if (result.organizerUrl) {
+                    document.getElementById('newEventOrganizerLink').style.display = 'flex';
+                    document.getElementById('newEventOrganizerLinkText').textContent = result.organizerUrl;
+                    const copyBtn = document.getElementById('newEventCopyLinkBtn');
+                    const newCopyBtn = copyBtn.cloneNode(true);
+                    copyBtn.parentNode.replaceChild(newCopyBtn, copyBtn);
+                    newCopyBtn.addEventListener('click', () => copyToClipboard(result.organizerUrl));
+                }
+
+                const pdfBtn = document.getElementById('pdfBtn');
+                pdfBtn.style.display = 'block';
+                const newPdfBtn = pdfBtn.cloneNode(true);
+                pdfBtn.parentNode.replaceChild(newPdfBtn, pdfBtn);
+                newPdfBtn.addEventListener('click', () => downloadPdf(currentEventId));
+
+                document.getElementById('organizerFirstName').value = '';
+                document.getElementById('organizerSecondName').value = '';
+                document.getElementById('eventDate').value = '';
+                document.getElementById('eventVenue').value = '';
+                document.getElementById('guestList').value = '';
+                loadAdminEvents();
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) { console.error('❌ Gabim:', error); alert('❌ Gabim në lidhje me serverin: ' + error.message); }
+        }
+
+        async function loadAdminEvents() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/events`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const events = await response.json();
+                const container = document.getElementById('adminEvents');
+                if (events.length === 0) { container.innerHTML = '<div class="no-events">📭 Nuk ka asnjë event të krijuar ende.</div>'; return; }
+
+                container.innerHTML = events.map(event => {
+                    const eventName = event.eventName || event.event_name || 'X & Y';
+                    const guestCount = event.guests ? event.guests.length : 0;
+                    const eventDate = event.date ? new Date(event.date).toLocaleDateString('sq-AL') : 'Data e pacaktuar';
+                    const venue = event.venue || 'Vend i pacaktuar';
+                    return `<div class="admin-event-wrapper" data-event-id="${event.id}">
+                        <div class="admin-event" data-event-id="${event.id}">
+                            <div class="event-info">
+                                <div class="event-name">Dasma e ${eventName}</div>
+                                <div class="event-details">📅 ${eventDate} • 📍 ${venue} • 👤 ${guestCount} të ftuar</div>
+                                <div class="event-id-inline">ID: ${event.id}</div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-view" data-action="view" data-event-id="${event.id}">👁️ Shiko</button>
+                                <button class="btn-gallery" data-action="gallery" data-event-id="${event.id}">🖼️ Galeria</button>
+                                <button class="btn-organizer-link" data-action="organizer-link" data-event-id="${event.id}">🔗 Organizatori</button>
+                                <button class="btn-regenerate" data-action="regenerate" data-event-id="${event.id}">🔄 Rigjenero Linkun</button>
+                                <button class="btn-pdf-sm" data-action="pdf" data-event-id="${event.id}">📄 PDF</button>
+                                <button class="btn-delete" data-action="delete" data-event-id="${event.id}">🗑️ Fshi</button>
+                            </div>
+                        </div>
+                        <div class="guest-panel-slot" id="panel-${event.id}"></div>
+                        <div class="gallery-panel-slot" id="gallery-panel-${event.id}"></div>
+                        <div class="organizer-link-slot" id="organizer-link-${event.id}"></div>
+                        <div class="regen-result-slot" id="regen-result-${event.id}"></div>
+                    </div>`;
+                }).join('');
+
+                adminEventsCache = events;
+
+                container.querySelectorAll('.actions button').forEach(btn => {
+                    const action = btn.dataset.action; const eventId = btn.dataset.eventId;
+                    if (action === 'view') btn.addEventListener('click', () => toggleEventPanel(eventId, btn));
+                    else if (action === 'gallery') btn.addEventListener('click', () => toggleGalleryPanel(eventId, btn));
+                    else if (action === 'organizer-link') btn.addEventListener('click', () => toggleOrganizerLinkPanel(eventId, btn));
+                    else if (action === 'regenerate') btn.addEventListener('click', () => regenerateLink(eventId));
+                    else if (action === 'pdf') btn.addEventListener('click', () => downloadPdf(eventId));
+                    else if (action === 'delete') btn.addEventListener('click', () => deleteEvent(eventId));
+                });
+
+                // Nëse një panel ishte i hapur, e rihapim pas rifreskimit të listës
+                if (expandedEventId) {
+                    const stillExists = events.some(e => String(e.id) === String(expandedEventId));
+                    if (stillExists) {
+                        const viewBtn = container.querySelector(`.btn-view[data-event-id="${expandedEventId}"]`);
+                        if (viewBtn) viewBtn.classList.add('active');
+                        renderGuestPanel(expandedEventId);
+                    } else {
+                        expandedEventId = null;
+                    }
+                }
+                if (expandedGalleryEventId) {
+                    const stillExists = events.some(e => String(e.id) === String(expandedGalleryEventId));
+                    if (stillExists) {
+                        const galBtn = container.querySelector(`.btn-gallery[data-event-id="${expandedGalleryEventId}"]`);
+                        if (galBtn) galBtn.classList.add('active');
+                        renderGalleryPanel(expandedGalleryEventId);
+                    } else {
+                        expandedGalleryEventId = null;
+                    }
+                }
+                if (expandedOrganizerLinkEventId) {
+                    const stillExists = events.some(e => String(e.id) === String(expandedOrganizerLinkEventId));
+                    const wasOpen = expandedOrganizerLinkEventId;
+                    if (stillExists) {
+                        expandedOrganizerLinkEventId = null; // reset se toggleOrganizerLinkPanel e rikthen
+                        const orgBtn = container.querySelector(`.btn-organizer-link[data-event-id="${wasOpen}"]`);
+                        toggleOrganizerLinkPanel(wasOpen, orgBtn);
+                    } else {
+                        expandedOrganizerLinkEventId = null;
+                    }
+                }
+            } catch (error) { console.error('Gabim:', error); document.getElementById('adminEvents').innerHTML = '<div class="no-events">❌ Gabim në ngarkimin e eventeve: ' + error.message + '</div>'; }
+        }
+
+        // ============================================================
+        // PANELI I TË FTUARVE (hapet nga "👁️ Shiko")
+        // ============================================================
+        function toggleEventPanel(eventId, btnEl) {
+            const slot = document.getElementById(`panel-${eventId}`);
+            if (expandedEventId === eventId) {
+                slot.innerHTML = '';
+                if (btnEl) btnEl.classList.remove('active');
+                expandedEventId = null;
+                return;
+            }
+            if (expandedEventId) {
+                const prevSlot = document.getElementById(`panel-${expandedEventId}`);
+                if (prevSlot) prevSlot.innerHTML = '';
+                const prevBtn = document.querySelector(`.btn-view[data-event-id="${expandedEventId}"]`);
+                if (prevBtn) prevBtn.classList.remove('active');
+            }
+            expandedEventId = eventId;
+            if (btnEl) btnEl.classList.add('active');
+            slot.innerHTML = '<div class="guest-panel"><div class="guest-panel-empty">Duke ngarkuar...</div></div>';
+            renderGuestPanel(eventId);
+        }
+
+        async function fetchEventDetails(eventId) {
+            const res = await fetch(`${BACKEND_URL}/api/events/${eventId}`, { credentials: 'same-origin' });
+            if (!res.ok) throw new Error('Eventi nuk u gjet');
+            return res.json();
+        }
+
+        async function renderGuestPanel(eventId) {
+            const slot = document.getElementById(`panel-${eventId}`);
+            if (!slot) return;
+            try {
+                const event = await fetchEventDetails(eventId);
+                const eventName = event.eventName || `${event.firstName || event.first_name || 'X'} & ${event.secondName || event.second_name || 'Y'}`;
+                const guests = event.guests || [];
+                slot.innerHTML = `
+                    <div class="guest-panel">
+                        <div class="guest-panel-header">
+                            <div>
+                                <div class="gp-title">Të ftuarit — ${escapeHtml(eventName)}</div>
+                                <div class="gp-id">ID: ${event.id}</div>
+                            </div>
+                            <a class="gp-open-link" href="${BACKEND_URL}/event/${event.id}" target="_blank" rel="noopener">Hap faqen ↗</a>
+                        </div>
+                        <div class="guest-add-row">
+                            <input type="text" placeholder="Emri" id="newGuestEmri-${eventId}">
+                            <input type="text" placeholder="Mbiemri" id="newGuestMbiemri-${eventId}">
+                            <input type="number" min="1" placeholder="Tavolina" class="tavoline-input" id="newGuestTavolina-${eventId}">
+                            <button class="btn-add-guest" id="addGuestBtn-${eventId}">Shto</button>
+                        </div>
+                        <div id="guestListContainer-${eventId}">
+                            ${guests.length === 0
+                                ? '<div class="guest-panel-empty">📭 Ende nuk ka të ftuar</div>'
+                                : guests.map((g, idx) => guestRowHtml(g, idx)).join('')}
+                        </div>
+                    </div>`;
+
+                document.getElementById(`addGuestBtn-${eventId}`).addEventListener('click', () => addGuest(eventId));
+                wireGuestRowActions(eventId, guests);
+            } catch (err) {
+                slot.innerHTML = `<div class="guest-panel"><div class="guest-panel-empty">❌ ${escapeHtml(err.message)}</div></div>`;
+            }
+        }
+
+        function guestRowHtml(guest, idx) {
+            return `<div class="guest-row" data-idx="${idx}">
+                <span class="guest-name">${escapeHtml(guest.name)} <span class="table-tag">· Tavolinë ${guest.table}</span></span>
+                <div class="guest-icons">
+                    <button class="icon-btn edit" data-action="edit" data-idx="${idx}" title="Edito">✏️</button>
+                    <button class="icon-btn delete" data-action="delete" data-idx="${idx}" title="Fshi">🗑️</button>
+                </div>
+            </div>`;
+        }
+
+        function wireGuestRowActions(eventId, guests) {
+            const listContainer = document.getElementById(`guestListContainer-${eventId}`);
+            if (!listContainer) return;
+            listContainer.querySelectorAll('.icon-btn').forEach(btn => {
+                const idx = parseInt(btn.dataset.idx, 10);
+                if (btn.dataset.action === 'edit') btn.addEventListener('click', () => startEditGuest(eventId, idx, guests[idx]));
+                else if (btn.dataset.action === 'delete') btn.addEventListener('click', () => deleteGuest(eventId, idx));
+            });
+        }
+
+        function startEditGuest(eventId, idx, guest) {
+            const row = document.querySelector(`#guestListContainer-${eventId} .guest-row[data-idx="${idx}"]`);
+            if (!row) return;
+            const parts = (guest.name || '').split(' ');
+            const emri = parts[0] || '';
+            const mbiemri = parts.slice(1).join(' ') || '';
+            row.classList.add('editing');
+            row.innerHTML = `
+                <input type="text" class="name-input" value="${escapeAttr(emri)}" id="editEmri-${eventId}-${idx}" placeholder="Emri">
+                <input type="text" class="name-input" value="${escapeAttr(mbiemri)}" id="editMbiemri-${eventId}-${idx}" placeholder="Mbiemri">
+                <input type="number" class="table-input" value="${guest.table}" id="editTavolina-${eventId}-${idx}" min="1">
+                <div class="guest-icons">
+                    <button class="icon-btn edit" data-action="save" title="Ruaj">✅</button>
+                    <button class="icon-btn delete" data-action="cancel" title="Anulo">✖️</button>
+                </div>`;
+            row.querySelector('[data-action="save"]').addEventListener('click', () => saveGuestEdit(eventId, idx));
+            row.querySelector('[data-action="cancel"]').addEventListener('click', () => renderGuestPanel(eventId));
+        }
+
+        async function saveGuestEdit(eventId, idx) {
+            const emri = document.getElementById(`editEmri-${eventId}-${idx}`).value.trim();
+            const mbiemri = document.getElementById(`editMbiemri-${eventId}-${idx}`).value.trim();
+            const tavolina = document.getElementById(`editTavolina-${eventId}-${idx}`).value;
+            if (!emri || !tavolina) { alert('📝 Plotëso emrin dhe tavolinën.'); return; }
+            const name = mbiemri ? `${emri} ${mbiemri}` : emri;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/guests/${idx}`, {
+                    method: 'PUT', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, table: tavolina })
+                });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në përditësim'); }
+                await renderGuestPanel(eventId);
+                loadAdminEvents();
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        async function addGuest(eventId) {
+            const emri = document.getElementById(`newGuestEmri-${eventId}`).value.trim();
+            const mbiemri = document.getElementById(`newGuestMbiemri-${eventId}`).value.trim();
+            const tavolina = document.getElementById(`newGuestTavolina-${eventId}`).value;
+            if (!emri || !tavolina) { alert('📝 Plotëso emrin dhe tavolinën.'); return; }
+            const name = mbiemri ? `${emri} ${mbiemri}` : emri;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/guests`, {
+                    method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, table: tavolina })
+                });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në shtim'); }
+                await renderGuestPanel(eventId);
+                loadAdminEvents();
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        async function deleteGuest(eventId, idx) {
+            if (!confirm('⚠️ A je i sigurt që do ta fshish këtë të ftuar?')) return;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/guests/${idx}`, { method: 'DELETE', credentials: 'same-origin' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në fshirje'); }
+                await renderGuestPanel(eventId);
+                loadAdminEvents();
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        // ============================================================
+        // 🖼️ PANELI I GALERISË (hapet nga "🖼️ Galeria")
+        // ============================================================
+        function toggleGalleryPanel(eventId, btnEl) {
+            const slot = document.getElementById(`gallery-panel-${eventId}`);
+            if (expandedGalleryEventId === eventId) {
+                slot.innerHTML = '';
+                if (btnEl) btnEl.classList.remove('active');
+                expandedGalleryEventId = null;
+                return;
+            }
+            if (expandedGalleryEventId) {
+                const prevSlot = document.getElementById(`gallery-panel-${expandedGalleryEventId}`);
+                if (prevSlot) prevSlot.innerHTML = '';
+                const prevBtn = document.querySelector(`.btn-gallery[data-event-id="${expandedGalleryEventId}"]`);
+                if (prevBtn) prevBtn.classList.remove('active');
+            }
+            expandedGalleryEventId = eventId;
+            if (btnEl) btnEl.classList.add('active');
+            slot.innerHTML = '<div class="gallery-panel"><div class="gallery-panel-empty">Duke ngarkuar...</div></div>';
+            renderGalleryPanel(eventId);
+        }
+
+        async function fetchGallery(eventId) {
+            const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/gallery`, { credentials: 'same-origin' });
+            if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në ngarkimin e galerisë'); }
+            return res.json();
+        }
+
+        async function renderGalleryPanel(eventId) {
+            const slot = document.getElementById(`gallery-panel-${eventId}`);
+            if (!slot) return;
+            try {
+                const { media, memories } = await fetchGallery(eventId);
+                const mediaHtml = media.length === 0
+                    ? '<div class="gallery-panel-empty">📭 Ende nuk ka foto/video nga mysafirët</div>'
+                    : `<div class="gallery-grid">${media.map(item => galleryItemHtml(eventId, item)).join('')}</div>`;
+
+                const memoriesHtml = memories.length === 0
+                    ? ''
+                    : `<div class="gallery-memories">
+                        <h5>💬 Urimet (${memories.length})</h5>
+                        ${memories.map(m => memoryCardHtml(eventId, m)).join('')}
+                    </div>`;
+
+                slot.innerHTML = `
+                    <div class="gallery-panel">
+                        <div class="gallery-panel-header">
+                            <div>
+                                <div class="gp-title">Galeria e Eventit</div>
+                                <div class="gp-count">📸 ${media.length} media · 💬 ${memories.length} urime</div>
+                            </div>
+                            ${(media.length > 0 || memories.length > 0) ? `<button class="btn-delete" id="clearGalleryBtn-${eventId}" style="font-size:0.72rem; padding:6px 12px;">🗑️ Pastro Gjithë Galerinë</button>` : ''}
+                        </div>
+                        ${mediaHtml}
+                        ${memoriesHtml}
+                    </div>`;
+
+                wireGalleryActions(eventId);
+                const clearBtn = document.getElementById(`clearGalleryBtn-${eventId}`);
+                if (clearBtn) clearBtn.addEventListener('click', () => clearWholeGallery(eventId));
+            } catch (err) {
+                slot.innerHTML = `<div class="gallery-panel"><div class="gallery-panel-empty">❌ ${escapeHtml(err.message)}</div></div>`;
+            }
+        }
+
+        function galleryItemHtml(eventId, item) {
+            const isVideo = item.type === 'video';
+            const mediaTag = isVideo
+                ? `<video src="${item.file_url}" muted preload="metadata"></video>`
+                : `<img src="${item.file_url}" alt="${escapeHtml(item.name || '')}" loading="lazy">`;
+            return `<div class="gallery-item" data-media-id="${item.id}">
+                ${mediaTag}
+                <span class="gallery-item-type">${isVideo ? '🎥' : '📸'}</span>
+                <button class="gallery-item-delete" data-action="delete-media" data-media-id="${item.id}" title="Fshi">✕</button>
+                <span class="gallery-item-name">${escapeHtml(item.name || 'Anonim')}</span>
+            </div>`;
+        }
+
+        function memoryCardHtml(eventId, memory) {
+            return `<div class="memory-card" data-memory-id="${memory.id}">
+                <div class="memory-card-body">
+                    <strong>${escapeHtml(memory.name || 'Anonim')}</strong>
+                    <p>${escapeHtml(memory.text || '')}</p>
+                </div>
+                <button class="icon-btn delete" data-action="delete-memory" data-memory-id="${memory.id}" title="Fshi">🗑️</button>
+            </div>`;
+        }
+
+        function wireGalleryActions(eventId) {
+            const slot = document.getElementById(`gallery-panel-${eventId}`);
+            if (!slot) return;
+            slot.querySelectorAll('[data-action="delete-media"]').forEach(btn => {
+                btn.addEventListener('click', () => deleteMediaItem(eventId, btn.dataset.mediaId));
+            });
+            slot.querySelectorAll('[data-action="delete-memory"]').forEach(btn => {
+                btn.addEventListener('click', () => deleteMemoryItem(eventId, btn.dataset.memoryId));
+            });
+        }
+
+        async function deleteMediaItem(eventId, mediaId) {
+            if (!confirm('⚠️ A je i sigurt që do ta fshish këtë foto/video? Ky veprim nuk kthehet mbrapsht.')) return;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/media/${mediaId}`, { method: 'DELETE', credentials: 'same-origin' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në fshirje'); }
+                await renderGalleryPanel(eventId);
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        async function deleteMemoryItem(eventId, memoryId) {
+            if (!confirm('⚠️ A je i sigurt që do ta fshish këtë urim?')) return;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/memories/${memoryId}`, { method: 'DELETE', credentials: 'same-origin' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në fshirje'); }
+                await renderGalleryPanel(eventId);
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        async function clearWholeGallery(eventId) {
+            if (!confirm('⚠️⚠️ Kjo do të fshijë PËRGJITHMONË të gjitha fotot, videot dhe urimet e këtij eventi.\n\nS\'ka kthim mbrapsht. A je VËRTET i sigurt?')) return;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/gallery`, { method: 'DELETE', credentials: 'same-origin' });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në pastrim'); }
+                await renderGalleryPanel(eventId);
+            } catch (err) { alert('❌ ' + err.message); }
+        }
+
+        // ============================================================
+        // 🔗 KUTIA E LINKUT TË ORGANIZATORIT (çiftit) — hapet nga "🔗 Organizatori"
+        // ============================================================
+        function toggleOrganizerLinkPanel(eventId, btnEl) {
+            const slot = document.getElementById(`organizer-link-${eventId}`);
+            if (expandedOrganizerLinkEventId === eventId) {
+                slot.innerHTML = '';
+                if (btnEl) btnEl.classList.remove('active');
+                expandedOrganizerLinkEventId = null;
+                return;
+            }
+            if (expandedOrganizerLinkEventId) {
+                const prevSlot = document.getElementById(`organizer-link-${expandedOrganizerLinkEventId}`);
+                if (prevSlot) prevSlot.innerHTML = '';
+                const prevBtn = document.querySelector(`.btn-organizer-link[data-event-id="${expandedOrganizerLinkEventId}"]`);
+                if (prevBtn) prevBtn.classList.remove('active');
+            }
+            expandedOrganizerLinkEventId = eventId;
+            if (btnEl) btnEl.classList.add('active');
+
+            const event = adminEventsCache.find(e => String(e.id) === String(eventId));
+            const token = event && event.organizerToken;
+            if (!token) {
+                slot.innerHTML = '<div class="organizer-link-box"><div class="organizer-link-text">❌ Nuk u gjet tokeni i organizatorit.</div></div>';
+                return;
+            }
+            const url = `${window.location.origin}/organizer/${event.publicId}?token=${token}`;
+            slot.innerHTML = `
+                <div class="organizer-link-box">
+                    <div class="organizer-link-label">🔗 Linku për çiftin — menaxhojnë vetëm galerinë e eventit të tyre:</div>
+                    <div class="organizer-link-text">${url}</div>
+                    <button class="btn-copy-link" id="copyOrgLinkBtn-${eventId}">📋 Kopjo</button>
+                </div>`;
+            document.getElementById(`copyOrgLinkBtn-${eventId}`).addEventListener('click', () => copyToClipboard(url));
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => alert('✅ Linku u kopjua!')).catch(() => promptFallbackCopy(text));
+            } else {
+                promptFallbackCopy(text);
+            }
+        }
+
+        function promptFallbackCopy(text) {
+            window.prompt('Kopjo linkun manualisht:', text);
+        }
+
+        // ============================================================
+        // 🔄 RIGJENERIMI I LINKUT/QR-SË — kur një link i vjetër duhet "djegur"
+        // ============================================================
+        async function regenerateLink(eventId) {
+            if (!confirm('⚠️ Kjo do ta zëvendësojë linkun/QR-n aktual me një të ri.\n\nLinku/QR-i i VJETËR do të ndalojë së funksionuari menjëherë (edhe për mysafirët, edhe për organizatorët).\n\nA je i sigurt që do të vazhdosh?')) return;
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}/regenerate-link`, {
+                    method: 'POST', credentials: 'same-origin'
+                });
+                if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Gabim në rigjenerim'); }
+                const data = await res.json();
+
+                // Rifreskojmë listën PARA se të shfaqim kutinë e rezultatit — përndryshe
+                // rifreskimi do ta rikrijonte slot-in bosh dhe do të fshinte mesazhin.
+                await loadAdminEvents();
+
+                const slot = document.getElementById(`regen-result-${eventId}`);
+                if (!slot) return;
+                slot.innerHTML = `
+                    <div class="regen-result-box">
+                        <div class="regen-title">✅ Linku u rigjenerua!</div>
+                        <div class="regen-warning">Linku/QR-i i vjetër nuk funksionon më. Shpërndaj tashmë vetëm këto:</div>
+                        <div class="regen-qr"><img src="${data.qrCode}" alt="QR i ri"></div>
+                        <div class="organizer-link-box">
+                            <div class="organizer-link-label">👥 Linku i mysafirëve (QR-i):</div>
+                            <div class="organizer-link-text">${data.qrUrl}</div>
+                            <button class="btn-copy-link" id="regenGuestCopy-${eventId}">📋 Kopjo</button>
+                        </div>
+                        <div class="organizer-link-box">
+                            <div class="organizer-link-label">🔗 Linku i organizatorit (çiftit):</div>
+                            <div class="organizer-link-text">${data.organizerUrl}</div>
+                            <button class="btn-copy-link" id="regenOrgCopy-${eventId}">📋 Kopjo</button>
+                        </div>
+                    </div>`;
+                document.getElementById(`regenGuestCopy-${eventId}`).addEventListener('click', () => copyToClipboard(data.qrUrl));
+                document.getElementById(`regenOrgCopy-${eventId}`).addEventListener('click', () => copyToClipboard(data.organizerUrl));
+            } catch (err) {
+                alert('❌ ' + err.message);
+            }
+        }
+
+        function escapeHtml(text) { if (!text) return ''; const d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
+        function escapeAttr(text) { return (text || '').replace(/"/g, '&quot;'); }
+
+        async function deleteEvent(eventId) {
+            if (!confirm('⚠️ A jeni të sigurt që doni ta fshini këtë event?')) return;
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/admin/events/${eventId}`, { method: 'DELETE', credentials: 'same-origin' });
+                if (response.ok) { alert('✅ Eventi u fshi me sukses!'); loadAdminEvents(); }
+                else { const error = await response.json().catch(() => ({})); alert('❌ Gabim: ' + (error.error || 'Provoni përsëri')); }
+            } catch (error) { console.error('Gabim në fshirje:', error); alert('❌ Gabim në lidhje me serverin: ' + error.message); }
+        }
+
+        async function downloadPdf(eventId) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/events/${eventId}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const event = await response.json();
+                if (!event) { alert('❌ Eventi nuk u gjet'); return; }
+                const qrCodeDataUrl = event.qrCode || event.qr_code || currentQrCodeDataUrl;
+                generatePdf(event, qrCodeDataUrl);
+            } catch (error) { console.error('Gabim:', error); alert('❌ Gabim në gjenerimin e PDF-it: ' + error.message); }
+        }
+
+        function generatePdf(event, qrCodeDataUrl) {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF('p', 'mm', 'a4');
+            const gold = '#D4A84C', black = '#1A1A1A', gray = '#888888', centerX = 105;
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(48); doc.setTextColor(black);
+            const festWidth = doc.getTextWidth('Fest'); const startX = centerX - (festWidth + 20) / 2;
+            doc.text('Fest', startX, 45, { align: 'left' }); doc.setTextColor(gold); doc.text('O', startX + festWidth, 45, { align: 'left' });
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.setTextColor(gray); doc.text('Find Your Place. Share Your Joy.', centerX, 57, { align: 'center' });
+            const firstName = event.firstName || event.first_name || '?'; const secondName = event.secondName || event.second_name || '?';
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(30); doc.setTextColor(gold); doc.text(`${firstName} & ${secondName}`, centerX, 80, { align: 'center' });
+            if (qrCodeDataUrl) {
+                try { const qrSize = 70; const xPos = (210 - qrSize) / 2; const yPos = 90; doc.addImage(qrCodeDataUrl, 'PNG', xPos, yPos, qrSize, qrSize); const startY = yPos + qrSize + 15;
+                    doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(black); doc.text('SKANO KODIN QR', centerX, startY, { align: 'center' });
+                    doc.setFont('helvetica', 'normal'); doc.setFontSize(14); doc.setTextColor(black);
+                    let itemY = startY + 10; ['Gjej tavolinën', 'Shiko hartën', 'Ndaj kujtimet'].forEach(item => { itemY += 9; doc.text(item, centerX, itemY, { align: 'center' }); });
+                    const detailsY = itemY + 22; doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(black); doc.text(`Dasma e ${firstName} & ${secondName}`, centerX, detailsY, { align: 'center' });
+                    doc.setFont('helvetica', 'normal'); doc.setFontSize(14); doc.setTextColor(gray); let detailsLine = `Data: ${new Date(event.date).toLocaleDateString('sq-AL')}`; if (event.venue) detailsLine += `  Vendi: ${event.venue}`; doc.text(detailsLine, centerX, detailsY + 10, { align: 'center' });
+                    const guestCount = event.guests ? event.guests.length : 0; doc.setFontSize(13); doc.setTextColor(gray); doc.text(`Te ftuar: ${guestCount}`, centerX, detailsY + 22, { align: 'center' });
+                } catch (error) { console.error('Gabim me QR:', error); generatePdfWithoutQr(doc, event); }
+            } else generatePdfWithoutQr(doc, event);
+            doc.setFontSize(8); doc.setTextColor('#CCCCCC'); doc.text('FestO · Find Your Place. Share Your Joy.', centerX, 285, { align: 'center' });
+            doc.save(`FestO_${firstName}_${secondName}.pdf`);
+        }
+
+        function generatePdfWithoutQr(doc, event) {
+            const centerX = 105, gray = '#888888', black = '#1A1A1A';
+            const firstName = event.firstName || event.first_name || '?'; const secondName = event.secondName || event.second_name || '?';
+            const startY = 120; doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(black); doc.text('SKANO KODIN QR', centerX, startY, { align: 'center' });
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(14); doc.setTextColor(black); let itemY = startY + 10;
+            ['Gjej tavolinën', 'Shiko hartën', 'Ndaj kujtimet'].forEach(item => { itemY += 9; doc.text(item, centerX, itemY, { align: 'center' }); });
+            const detailsY = itemY + 22; doc.setFont('helvetica', 'bold'); doc.setFontSize(16); doc.setTextColor(black); doc.text(`Dasma e ${firstName} & ${secondName}`, centerX, detailsY, { align: 'center' });
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(14); doc.setTextColor(gray); let detailsLine = `Data: ${new Date(event.date).toLocaleDateString('sq-AL')}`; if (event.venue) detailsLine += `  Vendi: ${event.venue}`; doc.text(detailsLine, centerX, detailsY + 10, { align: 'center' });
+            const guestCount = event.guests ? event.guests.length : 0; doc.setFontSize(13); doc.setTextColor(gray); doc.text(`Te ftuar: ${guestCount}`, centerX, detailsY + 22, { align: 'center' });
+        }
+
+        async function checkSession() {
+            try {
+                const res = await fetch('/api/session', { credentials: 'same-origin' });
+                if (res.ok) { const data = await res.json(); if (data.authenticated) { showDashboard(); loadAdminEvents(); return true; } }
+            } catch (e) { console.error('Gabim në kontrollin e sesionit:', e); }
+            showLogin(); return false;
+        }
+
+        function showLogin() { document.getElementById('loginOverlay').classList.remove('festo-hidden'); document.getElementById('dashboard').classList.add('festo-hidden'); }
+        function showDashboard() { document.getElementById('loginOverlay').classList.add('festo-hidden'); document.getElementById('dashboard').classList.remove('festo-hidden'); }
+
+        async function doLogin(e) {
+            e.preventDefault(); const username = document.getElementById('loginUsername').value.trim(); const password = document.getElementById('loginPassword').value; const errorDiv = document.getElementById('loginError'); errorDiv.textContent = '';
+            try {
+                const res = await fetch('/api/login', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+                if (res.ok) { document.getElementById('loginUsername').value = ''; document.getElementById('loginPassword').value = ''; showDashboard(); loadAdminEvents(); }
+                else { const data = await res.json().catch(() => ({})); errorDiv.textContent = data.error || 'Kredenciale të pasakta.'; }
+            } catch (err) { console.error('Gabim në hyrje:', err); errorDiv.textContent = 'Gabim në lidhje me serverin.'; }
+        }
+
+        async function doLogout() {
+            try { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); } catch (e) { console.error('Gabim në dalje:', e); }
+            showLogin(); document.getElementById('adminEvents').innerHTML = '<div class="no-events">🔍 Duke ngarkuar eventet...</div>';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✨ FestO Premium u ngarkua!'); console.log('🔗 Backend URL:', BACKEND_URL || 'Same server (relative paths)');
+            const btn = document.getElementById('createBtn'); if (btn) btn.addEventListener('click', createNewEvent);
+            const loginForm = document.getElementById('loginForm'); if (loginForm) loginForm.addEventListener('submit', doLogin);
+            const logoutBtn = document.getElementById('logoutBtn'); if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+            const reloadBtn = document.getElementById('reloadEventsBtn'); if (reloadBtn) reloadBtn.addEventListener('click', loadAdminEvents);
+            checkSession();
+        });
+    </script>
+</body>
+</html>
