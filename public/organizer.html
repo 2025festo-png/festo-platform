@@ -204,11 +204,10 @@
                 photosGrid.innerHTML = '<div class="empty-state">❌ Gabim në lidhje me serverin.</div>';
             }
         }
-
         function galleryItemHtml(item) {
-            const isVideo = item.type === 'video';
-            const mediaTag = isVideo
-                ? `<video src="${item.file_url}" width="100%" height="100%" muted preload="metadata" style="display:block; object-fit:cover;"></video>`
+        const isVideo = item.type === 'video';
+        const mediaTag = isVideo
+        ? `<video src="${item.file_url}" width="100%" height="100%" controls muted preload="metadata" style="display:block; object-fit:cover; background:#1a1a1a;"></video>`
                 : `<img src="${item.file_url}" alt="${escapeHtml(item.name || '')}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">`;
             return `<div class="gallery-item">
                 ${mediaTag}
