@@ -119,7 +119,7 @@ const loginLimiter = rateLimit({
 // ============================================================
 // RRUGËT PËR FAQET - PRODUCTION (RENDER)
 // ============================================================
-const publicPath = path.join(process.cwd(), 'public');
+const publicPath = path.join(__dirname, '..', 'public');
 
 app.use(cors({
     origin: true,
