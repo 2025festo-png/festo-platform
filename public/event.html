@@ -66,9 +66,9 @@
         .d5 { font-size: 0.6rem; animation-delay: 1.6s; }
         @keyframes floatStar { 0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; } 50% { transform: translateY(-8px) scale(1.2); opacity: 0.9; } }
         .welcome-message { text-align: center; padding: 6px 0 26px; flex-shrink: 0; border-bottom: 1px solid rgba(212, 168, 76, 0.1); margin-bottom: 20px; }
-        .welcome-message .welcome-line { font-family: 'Dancing Script', cursive; font-weight: 600; font-size: 3rem; color: #1A1A1A; letter-spacing: 0.3px; line-height: 1.15; }
+        .welcome-message .welcome-line { font-family: 'Dancing Script', cursive; font-weight: 600; font-size: 3rem; color: #1A1A1A; letter-spacing: 0.3px; line-height: 1.15; white-space: nowrap; display: inline-block; max-width: 100%; }
         .welcome-message .accent { color: #1A1A1A; font-weight: 600; }
-        .welcome-message .welcome-names { font-family: 'Dancing Script', cursive; font-weight: 600; font-size: 2.1rem; color: var(--festo-gold-dark); letter-spacing: 0.3px; margin-top: 6px; line-height: 1.15; }
+        .welcome-message .welcome-names { font-family: 'Dancing Script', cursive; font-weight: 600; font-size: 2.1rem; color: var(--festo-gold-dark); letter-spacing: 0.3px; margin-top: 6px; line-height: 1.15; white-space: nowrap; display: inline-block; max-width: 100%; }
         .welcome-message .welcome-names .amp { color: var(--festo-gold-dark); padding: 0 6px; font-style: italic; }
         .primary-section { flex: 1; display: flex; flex-direction: column; padding: 10px 0 5px 0; }
         .primary-section.hidden { display: none; }
@@ -181,8 +181,6 @@
             .d1 { font-size: 0.6rem; } .d2 { font-size: 0.9rem; } .d3 { font-size: 1.1rem; } .d4 { font-size: 0.8rem; } .d5 { font-size: 0.5rem; }
             .main-title { font-size: 1.1rem; }
             .welcome-message { padding: 4px 0 14px; margin-bottom: 12px; }
-            .welcome-message .welcome-line { font-size: 1.9rem; }
-            .welcome-message .welcome-names { font-size: 1.4rem; margin-top: 5px; }
             .table-number { font-size: 2.5rem; }
             .form-group input { padding: 18px 16px 6px 16px; padding-left: 18px; }
             .form-group .floating-label { left: 18px; font-size: 0.8rem; }
@@ -205,8 +203,6 @@
             .footer-menu { margin-top: 12px; padding-top: 10px; }
         }
         @media (max-width: 380px) {
-            .welcome-message .welcome-line { font-size: 1.65rem; }
-            .welcome-message .welcome-names { font-size: 1.25rem; }
             .map-container { gap: 4px; padding: 8px; }
             .map-table-clickable { padding: 6px 2px; }
             .map-table-clickable .num { font-size: 0.75rem; }
@@ -237,7 +233,7 @@
         </div>
         <div class="welcome-message" data-testid="event-header">
             <div class="welcome-line">
-                Mirëseerdhët<span class="accent">!</span>
+                Mirëseerdhët në dasmën tonë<span class="accent">!</span>
             </div>
             <div class="welcome-names">
                 <span id="firstNameDisplay" data-testid="header-first-name">Ermira</span>
@@ -375,6 +371,24 @@
             share: `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`
         };
         let currentPrimary = 'findTable';
+
+        function fitTextToContainer(el, maxSize, minSize) {
+            if (!el || !el.parentElement) return;
+            const parentWidth = el.parentElement.clientWidth;
+            if (!parentWidth) return;
+            let fontSize = maxSize;
+            el.style.fontSize = fontSize + 'px';
+            while (el.scrollWidth > parentWidth && fontSize > minSize) {
+                fontSize -= 0.5;
+                el.style.fontSize = fontSize + 'px';
+            }
+        }
+
+        function fitWelcomeText() {
+            fitTextToContainer(document.querySelector('.welcome-line'), 48, 18);
+            fitTextToContainer(document.querySelector('.welcome-names'), 34, 14);
+        }
+        window.addEventListener('resize', fitWelcomeText);
 
         function switchSection(sectionName) {
             currentPrimary = sectionName;
@@ -728,7 +742,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('✨ FestO Event Page u ngarkua!');
             switchSection('findTable');
-            loadEvent();
+            fitWelcomeText();
+            loadEvent().then(fitWelcomeText);
             document.getElementById('backLink').addEventListener('click', function(e) {
                 e.preventDefault();
                 switchSection('findTable');
