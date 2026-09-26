@@ -40,6 +40,22 @@
         .gallery-item .gallery-item-name { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.65), transparent); color: #fff; font-size: 0.65rem; padding: 14px 8px 6px; }
         .gallery-item .gallery-item-delete { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; border: none; background: rgba(220,53,69,0.9); color: #fff; cursor: pointer; font-size: 0.8rem; line-height: 1; display: flex; align-items: center; justify-content: center; z-index: 10; }
         .gallery-item .gallery-item-delete:hover { background: #c82333; }
+        /* Play button: small, bottom-right corner, doesn't dominate the thumbnail */
+        .gallery-item-play {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #fff;
+            pointer-events: none;
+        }
         .memory-card { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; background: linear-gradient(135deg, #FDF8F0 0%, rgba(232,201,122,0.15) 100%); border-radius: 12px; padding: 16px 16px; margin-bottom: 10px; border-left: 4px solid var(--festo-gold); box-shadow: 0 2px 6px rgba(212,168,76,0.08); }
         .memory-card .memory-card-body strong { color: var(--festo-black); font-size: 0.9rem; font-weight: 600; display: block; }
         .memory-card .memory-card-body p { color: var(--festo-dark); font-size: 0.88rem; margin-top: 6px; line-height: 1.5; font-style: italic; }
@@ -56,15 +72,16 @@
            ============================================================ */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 9999; padding: 0; animation: fadeIn 0.3s ease; }
         .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
-        .modal-container { position: relative; width: 95vw; height: 95vh; display: flex; align-items: center; justify-content: center; }
+        .modal-container { position: relative; width: 95vw; height: 95vh; display: flex; align-items: center; justify-content: center; touch-action: pan-y; }
         .modal-content { width: 100%; height: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
         .modal-media { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .modal-media img { max-width: 100%; max-height: 100%; object-fit: contain; width: auto; height: auto; }
         .modal-media video { width: 100%; height: 100%; object-fit: contain; }
         .modal-close { position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid white; color: white; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10000; }
         .modal-close:hover { background: rgba(255,255,255,0.4); }
-        .modal-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 12px 16px; font-size: 24px; cursor: pointer; transition: all 0.2s; border-radius: 8px; z-index: 9950; }
+        .modal-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 12px 16px; font-size: 24px; cursor: pointer; transition: transform 0.12s ease, background 0.2s; border-radius: 8px; z-index: 9950; }
         .modal-nav-btn:hover { background: rgba(255,255,255,0.4); }
+        .modal-nav-btn.nav-pulse { transform: translateY(-50%) scale(0.85); background: rgba(255,255,255,0.55); }
         .modal-prev { left: 10px; }
         .modal-next { right: 10px; }
         .modal-info { position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; text-align: center; border: 1px solid rgba(255,255,255,0.2); }
@@ -141,7 +158,7 @@
 
     <!-- MODAL LIGHTBOX -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-container">
+        <div class="modal-container" id="modalContainer">
             <div class="modal-content">
                 <button class="modal-close" id="modalClose">✕</button>
                 <button class="modal-nav-btn modal-prev" id="modalPrev">❮</button>
@@ -160,9 +177,16 @@
 
         const statusArea = document.getElementById('statusArea');
         const panelArea = document.getElementById('panelArea');
-        let allMediaItems = [];
+
+        // Separate arrays per category so numbering ("Foto 2/3", "Video 1/3") never mixes.
+        let photosArr = [];
+        let videosArr = [];
         let allMemories = [];
-        let currentMediaIndex = 0;
+
+        // Which category is currently open in the modal, and the index within that category's array.
+        let currentGalleryType = 'photo'; // 'photo' | 'video'
+        let currentGalleryIndex = 0;
+
         let eventFirstName = '', eventSecondName = '';
 
         function showStatus(html, isError) {
@@ -222,24 +246,24 @@
                 }
                 const { media, memories } = await res.json();
 
-                const photos = media.filter(m => m.type === 'photo');
-                const videos = media.filter(m => m.type === 'video');
+                photosArr = media.filter(m => m.type === 'photo');
+                videosArr = media.filter(m => m.type === 'video');
 
                 allMemories = memories;
-                document.getElementById('galleryStats').textContent = `📸 ${photos.length} foto · 🎥 ${videos.length} video · 💬 ${memories.length} urime`;
+                document.getElementById('galleryStats').textContent = `📸 ${photosArr.length} foto · 🎥 ${videosArr.length} video · 💬 ${memories.length} urime`;
 
                 // FOTO
-                if (photos.length > 0) {
+                if (photosArr.length > 0) {
                     photosCategory.style.display = 'block';
-                    photosGrid.innerHTML = `<div class="gallery-grid">${photos.map((item, idx) => galleryItemHtml(item, idx)).join('')}</div>`;
+                    photosGrid.innerHTML = `<div class="gallery-grid">${photosArr.map((item, idx) => galleryItemHtml(item, idx, 'photo')).join('')}</div>`;
                 } else {
                     photosCategory.style.display = 'none';
                 }
 
                 // VIDEO
-                if (videos.length > 0) {
+                if (videosArr.length > 0) {
                     videosCategory.style.display = 'block';
-                    videosGrid.innerHTML = `<div class="gallery-grid">${videos.map((item, idx) => galleryItemHtml(item, photos.length + idx)).join('')}</div>`;
+                    videosGrid.innerHTML = `<div class="gallery-grid">${videosArr.map((item, idx) => galleryItemHtml(item, idx, 'video')).join('')}</div>`;
                 } else {
                     videosCategory.style.display = 'none';
                 }
@@ -252,7 +276,6 @@
                     messagesCategory.style.display = 'none';
                 }
 
-                allMediaItems = [...photos, ...videos];
                 wireActions();
                 setupGalleryClick();
             } catch (err) {
@@ -261,15 +284,15 @@
             }
         }
 
-        function galleryItemHtml(item, index) {
-            const isVideo = item.type === 'video';
+        function galleryItemHtml(item, index, type) {
+            const isVideo = type === 'video';
             const mediaTag = isVideo
                 ? `<video muted preload="metadata" style="width:100%; height:100%; object-fit:cover; background:#1a1a1a;"><source src="${item.file_url}" type="video/mp4"><source src="${item.file_url}" type="video/webm"></video>`
                 : `<img src="${item.file_url}" alt="${escapeHtml(item.name || '')}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">`;
-            return `<div class="gallery-item" data-index="${index}">
+            return `<div class="gallery-item" data-type="${type}" data-index="${index}">
                 ${mediaTag}
                 <span class="gallery-item-type">${isVideo ? '🎥' : '📸'}</span>
-                ${isVideo ? '<span class="gallery-item-play" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.2rem; opacity:0.75; text-shadow: 0 2px 4px rgba(0,0,0,0.3); pointer-events:none;">▶️</span>' : ''}
+                ${isVideo ? '<span class="gallery-item-play">▶</span>' : ''}
                 <button class="gallery-item-delete" data-action="delete-media" data-id="${item.id}" title="Fshi">✕</button>
                 <span class="gallery-item-name">${escapeHtml(item.name || 'Anonim')}</span>
             </div>`;
@@ -289,8 +312,9 @@
             document.querySelectorAll('.gallery-item').forEach(el => {
                 el.addEventListener('click', function(e) {
                     if (e.target.classList.contains('gallery-item-delete')) return;
-                    const index = parseInt(this.dataset.index);
-                    openModal(index);
+                    const index = parseInt(this.dataset.index, 10);
+                    const type = this.dataset.type;
+                    openModal(type, index);
                 });
             });
         }
@@ -310,9 +334,14 @@
         // ============================================================
         // MODAL LIGHTBOX
         // ============================================================
-        function openModal(index) {
-            currentMediaIndex = index;
-            showModalItem(index);
+        function currentArr() {
+            return currentGalleryType === 'video' ? videosArr : photosArr;
+        }
+
+        function openModal(type, index) {
+            currentGalleryType = type;
+            currentGalleryIndex = index;
+            showModalItem(currentGalleryIndex);
             document.getElementById('modalOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -320,28 +349,56 @@
         function closeModal() {
             document.getElementById('modalOverlay').classList.remove('active');
             document.body.style.overflow = 'auto';
+            // stop any playing video when closing
+            const modalMedia = document.getElementById('modalMedia');
+            const vid = modalMedia.querySelector('video');
+            if (vid) vid.pause();
         }
 
         function showModalItem(index) {
-            if (index < 0) currentMediaIndex = allMediaItems.length - 1;
-            if (index >= allMediaItems.length) currentMediaIndex = 0;
-            
-            const item = allMediaItems[currentMediaIndex];
+            const arr = currentArr();
+            if (arr.length === 0) return;
+            if (index < 0) index = arr.length - 1;
+            if (index >= arr.length) index = 0;
+            currentGalleryIndex = index;
+
+            const item = arr[currentGalleryIndex];
             const modalMedia = document.getElementById('modalMedia');
-            
-            if (item.type === 'video') {
+
+            if (currentGalleryType === 'video') {
                 modalMedia.innerHTML = `<video controls autoplay muted playsinline style="max-width:100%; max-height:100%;"><source src="${item.file_url}" type="video/mp4"><source src="${item.file_url}" type="video/webm"></video>`;
             } else {
                 modalMedia.innerHTML = `<img src="${item.file_url}" alt="${escapeHtml(item.name)}" style="max-width:100%; max-height:100%; object-fit:contain;">`;
             }
-            
-            const icon = item.type === 'video' ? '🎥' : '📸';
-            document.getElementById('modalInfo').innerHTML = `${icon} ${escapeHtml(item.name)} · ${currentMediaIndex + 1} / ${allMediaItems.length}`;
+
+            const icon = currentGalleryType === 'video' ? '🎥' : '📸';
+            const label = currentGalleryType === 'video' ? 'Video' : 'Foto';
+            document.getElementById('modalInfo').innerHTML = `${icon} ${escapeHtml(item.name)} · ${label} ${currentGalleryIndex + 1} / ${arr.length}`;
+        }
+
+        // Small helper: gives a visible "pulse" on the arrow that was activated,
+        // whether by click or by keyboard/swipe, so navigation feels responsive.
+        function pulseNav(btn) {
+            if (!btn) return;
+            btn.classList.add('nav-pulse');
+            setTimeout(() => btn.classList.remove('nav-pulse'), 150);
+        }
+
+        const modalPrevBtn = document.getElementById('modalPrev');
+        const modalNextBtn = document.getElementById('modalNext');
+
+        function goPrev() {
+            pulseNav(modalPrevBtn);
+            showModalItem(currentGalleryIndex - 1);
+        }
+        function goNext() {
+            pulseNav(modalNextBtn);
+            showModalItem(currentGalleryIndex + 1);
         }
 
         document.getElementById('modalClose').addEventListener('click', closeModal);
-        document.getElementById('modalPrev').addEventListener('click', () => showModalItem(currentMediaIndex - 1));
-        document.getElementById('modalNext').addEventListener('click', () => showModalItem(currentMediaIndex + 1));
+        modalPrevBtn.addEventListener('click', goPrev);
+        modalNextBtn.addEventListener('click', goNext);
         document.getElementById('modalOverlay').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
@@ -349,14 +406,62 @@
         // Keyboard navigation
         document.addEventListener('keydown', function(e) {
             if (!document.getElementById('modalOverlay').classList.contains('active')) return;
-            if (e.key === 'ArrowLeft') showModalItem(currentMediaIndex - 1);
-            if (e.key === 'ArrowRight') showModalItem(currentMediaIndex + 1);
+            if (e.key === 'ArrowLeft') goPrev();
+            if (e.key === 'ArrowRight') goNext();
             if (e.key === 'Escape') closeModal();
         });
 
         // ============================================================
+        // SWIPE (touch) NAVIGATION
+        // ============================================================
+        const modalContainer = document.getElementById('modalContainer');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        const SWIPE_THRESHOLD = 40; // px
+
+        modalContainer.addEventListener('touchstart', function(e) {
+            const t = e.changedTouches[0];
+            touchStartX = t.screenX;
+            touchStartY = t.screenY;
+        }, { passive: true });
+
+        modalContainer.addEventListener('touchend', function(e) {
+            const t = e.changedTouches[0];
+            touchEndX = t.screenX;
+            touchEndY = t.screenY;
+            handleSwipeGesture();
+        }, { passive: true });
+
+        function handleSwipeGesture() {
+            const dx = touchEndX - touchStartX;
+            const dy = touchEndY - touchStartY;
+            // Ignore mostly-vertical swipes so scrolling/dismiss gestures aren't hijacked.
+            if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+            if (dx < 0) {
+                goNext(); // swipe left -> next
+            } else {
+                goPrev(); // swipe right -> prev
+            }
+        }
+
+        // ============================================================
         // PDF DOWNLOAD
         // ============================================================
+        // jsPDF's built-in fonts (Helvetica/Times) cannot render emoji glyphs -
+        // rendering them produces the mojibake seen before (e.g. "Ø=Ü•").
+        // Strip emoji / non-latin symbols from any text that goes into the PDF.
+        function stripEmoji(str) {
+            if (!str) return '';
+            return str
+                .replace(/[\u{1F300}-\u{1FAFF}]/gu, '')
+                .replace(/[\u{2600}-\u{27BF}]/gu, '')
+                .replace(/[\u{2190}-\u{21FF}]/gu, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+        }
+
         document.getElementById('downloadPdfBtn').addEventListener('click', function() {
             if (allMemories.length === 0) {
                 alert('⚠️ Nuk ka urime për të shkarkuar.');
@@ -365,22 +470,22 @@
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
+
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
             let y = 20;
 
-            // Header
-            doc.setFont('Playfair Display', 'bold');
+            // Header (emoji-free — see stripEmoji note above)
+            doc.setFont('helvetica', 'bold');
             doc.setFontSize(22);
-            doc.text('💍 URIMET PËR 💍', pageWidth / 2, y, { align: 'center' });
+            doc.text('URIMET PER', pageWidth / 2, y, { align: 'center' });
             y += 10;
 
             doc.setFontSize(14);
-            doc.text(`${eventFirstName} & ${eventSecondName}`, pageWidth / 2, y, { align: 'center' });
+            doc.text(`${stripEmoji(eventFirstName)} & ${stripEmoji(eventSecondName)}`, pageWidth / 2, y, { align: 'center' });
             y += 8;
 
-            doc.setFont('Inter', 'normal');
+            doc.setFont('helvetica', 'normal');
             doc.setFontSize(10);
             const dateStr = new Date().toLocaleDateString('sq-AL', { year: 'numeric', month: 'long', day: 'numeric' });
             doc.text(`${dateStr}`, pageWidth / 2, y, { align: 'center' });
@@ -391,8 +496,8 @@
             y += 12;
 
             // Messages
-            doc.setFont('Inter', 'normal');
-            allMemories.forEach((msg, idx) => {
+            doc.setFont('helvetica', 'normal');
+            allMemories.forEach((msg) => {
                 // Check if new page needed
                 if (y > pageHeight - 30) {
                     doc.addPage();
@@ -400,27 +505,27 @@
                 }
 
                 // Name
-                doc.setFont('Inter', 'bold');
+                doc.setFont('helvetica', 'bold');
                 doc.setFontSize(11);
                 doc.setTextColor(26, 26, 26);
-                doc.text(`💝 ${msg.name || 'Anonim'}`, 20, y);
+                doc.text(stripEmoji(msg.name) || 'Anonim', 20, y);
                 y += 7;
 
                 // Message text
-                doc.setFont('Inter', 'normal');
+                doc.setFont('helvetica', 'normal');
                 doc.setFontSize(10);
                 doc.setTextColor(45, 45, 45);
                 const maxWidth = pageWidth - 40;
-                const wrapped = doc.splitTextToSize(`"${msg.text || ''}"`, maxWidth);
+                const wrapped = doc.splitTextToSize(`"${stripEmoji(msg.text)}"`, maxWidth);
                 doc.text(wrapped, 25, y);
                 y += (wrapped.length * 6) + 10;
             });
 
             // Footer
-            doc.setFont('Playfair Display', 'italic');
+            doc.setFont('helvetica', 'italic');
             doc.setFontSize(9);
             doc.setTextColor(180, 148, 62);
-            doc.text('~ Gjej Vendin. Ndaj Gëzimin. ~', pageWidth / 2, pageHeight - 10, { align: 'center' });
+            doc.text('~ Gjej Vendin. Ndaj Gezimin. ~', pageWidth / 2, pageHeight - 10, { align: 'center' });
 
             // Save
             const fileName = `Urimet_${eventFirstName}_${eventSecondName}.pdf`;
