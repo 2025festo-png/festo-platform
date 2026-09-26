@@ -473,20 +473,27 @@
 
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
-            let y = 20;
+            let y = 24;
 
             // Header (emoji-free — see stripEmoji note above)
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.text('URIMET PER', pageWidth / 2, y, { align: 'center' });
-            y += 10;
 
-            doc.setFontSize(14);
+            // "Urimet për" - shkrim normal, jo kapital
+            doc.setFont('times', 'italic');
+            doc.setFontSize(13);
+            doc.setTextColor(110, 110, 110);
+            doc.text('Urimet për', pageWidth / 2, y, { align: 'center' });
+            y += 14;
+
+            // Emrat e çiftit - më të mëdhenj, stil festiv (italic, ngjyrë e artë)
+            doc.setFont('times', 'bolditalic');
+            doc.setFontSize(30);
+            doc.setTextColor(184, 148, 62);
             doc.text(`${stripEmoji(eventFirstName)} & ${stripEmoji(eventSecondName)}`, pageWidth / 2, y, { align: 'center' });
-            y += 8;
+            y += 12;
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
+            doc.setFontSize(9);
+            doc.setTextColor(150, 150, 150);
             const dateStr = new Date().toLocaleDateString('sq-AL', { year: 'numeric', month: 'long', day: 'numeric' });
             doc.text(`${dateStr}`, pageWidth / 2, y, { align: 'center' });
             y += 12;
@@ -521,11 +528,27 @@
                 y += (wrapped.length * 6) + 10;
             });
 
-            // Footer
-            doc.setFont('helvetica', 'italic');
+            // Footer - logo "FestO" + tagline, në fund të faqes së fundit
+            const footerTaglineY = pageHeight - 12;
+            const footerLogoY = footerTaglineY - 8;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+            const festText = 'Fest';
+            const oText = 'O';
+            const festWidth = doc.getTextWidth(festText);
+            const oWidth = doc.getTextWidth(oText);
+            const logoStartX = pageWidth / 2 - (festWidth + oWidth) / 2;
+            doc.setTextColor(26, 26, 26);
+            doc.text(festText, logoStartX, footerLogoY);
+            doc.setFont('helvetica', 'bolditalic');
+            doc.setTextColor(212, 168, 76);
+            doc.text(oText, logoStartX + festWidth, footerLogoY);
+
+            doc.setFont('times', 'italic');
             doc.setFontSize(9);
             doc.setTextColor(180, 148, 62);
-            doc.text('~ Gjej Vendin. Ndaj Gezimin. ~', pageWidth / 2, pageHeight - 10, { align: 'center' });
+            doc.text('Gjej Vendin. Ndaj Gëzimin.', pageWidth / 2, footerTaglineY, { align: 'center' });
 
             // Save
             const fileName = `Urimet_${eventFirstName}_${eventSecondName}.pdf`;
